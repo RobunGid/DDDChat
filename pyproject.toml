@@ -1,0 +1,18 @@
+[project]
+name = "dddchat"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Robun Gid"}
+]
+requires-python = "^3.11"
+dependencies = [
+    "fastapi (>=0.136.3,<0.137.0)",
+    "motor (>=3.7.1,<4.0.0)",
+    "uvicorn[all] (>=0.48.0,<0.49.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
