@@ -4,5 +4,6 @@ def create_app():
     return FastAPI(
 		title="DDDChat with Kafka",
 		docs_url="/api/docs",
-  		description="Kafka DDD chat"
+  		description="Kafka DDD chat",
+		debug=True,
 	)
