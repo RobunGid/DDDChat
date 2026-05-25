@@ -2,6 +2,7 @@ import pytest
 from faker import Faker
 from datetime import datetime
 
+from domain.events.messages import NewMessageReceivedEvent
 from domain.values.messages import Text, Title
 from domain.entities.messages import Chat, Message
 from domain.exceptions.messages import TitleTooLongException
@@ -44,3 +45,24 @@ def test_add_chat_to_message():
     chat.add_message(message)
     
     assert message in chat.messages
+    
+def test_new_message_events():
+    text = Text(fake.text(max_nb_chars=255))
+    message = Message(text)
+    
+    title = Title(fake.text(max_nb_chars=255))
+    chat = Chat(title=title)
+    
+    chat.add_message(message)
+    events = chat.pull_events()
+    pulled_events = chat.pull_events()
+    
+    assert not pulled_events, pulled_events
+    assert len(events) == 1, events
+    
+    new_event = events[0]
+    
+    assert isinstance(new_event, NewMessageReceivedEvent), new_event
+    assert new_event.message_oid == message.oid
+    assert new_event.message_text == message.text.as_generic_type()
+    assert new_event.chat_oid == chat.oid
