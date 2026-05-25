@@ -21,7 +21,7 @@ class CreateChatCommandHandler(CommandHandler[CreateChatCommand, Chat]):
         
         title = Title(value=command.title)
         new_chat = Chat.create_chat(title=title)
-        # TODO: Считать events 
+        # TODO: Count events 
         await self.chat_repository.add_chat(new_chat)
         return new_chat
         
