@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   main-app:
     build:
@@ -13,3 +11,9 @@ services:
       - ../.env
     volumes:
       - ../app/:/app/
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
