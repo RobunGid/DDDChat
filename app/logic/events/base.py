@@ -4,8 +4,8 @@ from typing import Any, Generic, TypeVar
 
 from domain.events.base import BaseEvent
 
-ET = TypeVar("ET", bound=BaseEvent)
-ER = TypeVar("ER", bound=Any)
+ET = TypeVar("ET", bound=BaseEvent) # Event Type
+ER = TypeVar("ER", bound=Any) # Event Result
 
 @dataclass
 class EventHandler(ABC, Generic[ET, ER]):

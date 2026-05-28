@@ -2,16 +2,17 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any, Generic, TypeVar
 
+
 @dataclass(frozen=True)
-class BaseCommand(ABC):
+class BaseQuery(ABC):
     ...
     
-CT = TypeVar('CT', bound=BaseCommand) # Command Type
-CR = TypeVar("CR", bound=Any) # Command Result
+QT = TypeVar('CT', bound=BaseQuery) # Query Type
+QR = TypeVar("CR", bound=Any) # Query Result
     
 @dataclass(frozen=True)
-class CommandHandler(ABC, Generic[CT, CR]):
+class BaseQueryHandler(ABC, Generic[QT, QR]):
     @abstractmethod
-    async def handle(self, command: CT) -> CR:
+    async def handle(self, query: QT) -> QR:
         ...
         

@@ -3,10 +3,22 @@ from functools import lru_cache
 from motor.motor_asyncio import AsyncIOMotorClient
 from punq import Container, Scope
 
-from infrastructure.repositories.messages.mongodb import MongoDBChatsRepository, MongoDBMessagesRepository
-from logic.commands.messages import CreateChatCommand, CreateChatCommandHandler, CreateMessageCommand, CreateMessageCommandHandler
+from infrastructure.repositories.messages.mongodb import (
+    MongoDBChatsRepository, 
+    MongoDBMessagesRepository
+)
+from logic.commands.messages import (
+    CreateChatCommand, 
+    CreateChatCommandHandler, 
+    CreateMessageCommand, 
+    CreateMessageCommandHandler
+)
 from logic.mediator import Mediator
-from infrastructure.repositories.messages.base import BaseChatsRepository, BaseMessagesRepository
+from infrastructure.repositories.messages.base import (
+    BaseChatsRepository, 
+    BaseMessagesRepository
+)
+from logic.queries.messages import GetChatQuery, GetChatQueryHandler
 from settings.config import Config
     
 @lru_cache(1)
@@ -45,6 +57,7 @@ def _init_container() -> Container:
     
     container.register(CreateChatCommandHandler)
     container.register(CreateMessageCommandHandler)
+    container.register(GetChatQueryHandler)
     
     def init_mediator() -> Mediator:
         mediator = Mediator()
@@ -55,6 +68,10 @@ def _init_container() -> Container:
         mediator.register_command(
             CreateMessageCommand,
             [container.resolve(CreateMessageCommandHandler)]
+        )
+        mediator.register_query(
+            GetChatQuery,
+            container.resolve(GetChatQueryHandler)
         )
         return mediator
     
