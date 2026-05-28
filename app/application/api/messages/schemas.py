@@ -5,6 +5,7 @@ from typing import Iterable
 
 from pydantic import BaseModel
 
+from application.api.schemas import BaseQueryResponseSchema
 from domain.entities.messages import Chat, Message
 
 
@@ -38,6 +39,7 @@ class CreateMessageResponseSchema(BaseModel):
     
 class ResponseMessageSchema(BaseModel):
     oid: str
+    chat_oid: str
     text: str
     created_at: datetime
     
@@ -47,6 +49,7 @@ class ResponseMessageSchema(BaseModel):
             oid=message.oid,
             text=message.text.as_generic_type(),
             created_at=message.created_at,
+            chat_oid=message.chat_oid
         )
         
 class ResponseChatSchema(BaseModel):
@@ -61,3 +64,6 @@ class ResponseChatSchema(BaseModel):
             title=chat.title.as_generic_type(),
             created_at=chat.created_at,
         )
+        
+class GetMessagesQueryResponseSchema(BaseQueryResponseSchema):
+    items: list[ResponseMessageSchema]

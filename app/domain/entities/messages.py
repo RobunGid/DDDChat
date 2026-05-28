@@ -6,6 +6,7 @@ from domain.entities.base import BaseEntity
 
 @dataclass(eq=False)
 class Message(BaseEntity):
+    chat_oid: str
     text: Text
     
 @dataclass(eq=False)
