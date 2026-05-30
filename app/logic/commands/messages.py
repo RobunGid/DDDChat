@@ -23,6 +23,7 @@ class CreateChatCommandHandler(CommandHandler[CreateChatCommand, Chat]):
         new_chat = Chat.create_chat(title=title)
         # TODO: Count events 
         await self.chats_repository.add_chat(new_chat)
+        await self._mediator.publish(new_chat.pull_events())
         return new_chat
         
 @dataclass(frozen=True)

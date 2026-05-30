@@ -1,5 +1,6 @@
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 from domain.events.base import BaseEvent
 
@@ -8,8 +9,12 @@ class NewMessageReceivedEvent(BaseEvent):
     message_oid: str
     message_text: str
     chat_oid: str
+    title: ClassVar[str] = 'New Message Received'
     
 @dataclass
-class NewChatCreated(BaseEvent):
+class NewChatCreatedEvent(BaseEvent):
     chat_oid: str
     chat_title: str
+    
+    title: ClassVar[str] = 'New Chat Created'
+    
