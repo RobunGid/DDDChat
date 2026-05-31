@@ -1,6 +1,6 @@
-from functools import lru_cache
+from functools import lru_cache, partial
 
-from aiokafka import AIOKafkaProducer
+from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
 from motor.motor_asyncio import AsyncIOMotorClient
 from punq import Container, Scope
 
@@ -69,10 +69,11 @@ def _init_container() -> Container:
     
     def init_message_broker() -> BaseMessageBroker:
         return KafkaMessageBroker(
-			producer=AIOKafkaProducer(bootstrap_servers=config.kafka_url)
+			producer=AIOKafkaProducer(bootstrap_servers=config.kafka_url),
+			consumer=AIOKafkaConsumer(bootstrap_servers=config.kafka_url, group_id="chat", metadata_max_age_ms=30000),
 		)
     
-    container.register(BaseMessageBroker, factory=init_message_broker, scope=Scope.singleton)
+    container.register(BaseMessageBroker, factory=init_message_broker, scope=Scope. singleton)
     
     def init_mediator() -> Mediator:
         mediator = Mediator()

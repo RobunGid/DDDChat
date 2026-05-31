@@ -7,5 +7,5 @@ class Config(BaseSettings):
     mongodb_chat_collection: str = Field(default="chat", alias="MONGO_DB_CHAT_COLLECTION")
     mongodb_messages_collection: str = Field(default="messages", alias="MONGO_DB_MESSAGES_COLLECTION")
     new_chats_event_topic: str = Field(default="new-chats-topic", alias="NEW_CHATS_EVENT_TOPIC")
-    new_message_received_event_topic: str = Field(default="new-message-topic", alias="NEW_MESSAGE_RECEIVED_EVENT_TOPIC")
+    new_message_received_event_topic: str = Field(default="chat-{chat_oid}-new-messages", alias="NEW_MESSAGE_RECEIVED_EVENT_TOPIC")
     kafka_url: str = Field(alias="KAFKA_URL")
