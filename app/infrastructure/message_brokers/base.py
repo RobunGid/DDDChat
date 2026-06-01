@@ -27,7 +27,3 @@ class BaseMessageBroker(ABC):
     @abstractmethod
     async def stop_consuming(self):
         pass
-    
-    @abstractmethod
-    async def consume(self, topic: str) -> dict:
-        pass
