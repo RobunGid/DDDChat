@@ -20,9 +20,40 @@ dependencies = [
     "aiokafka (>=0.14.0,<0.15.0)",
     "orjson (>=3.11.9,<4.0.0)",
     "websockets (>=16.0,<17.0)",
+    "aiojobs (>=1.4.0,<2.0.0)",
+    "pre-commit (>=4.6.0,<5.0.0)",
 ]
 
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+profile="black"
+line_length=120
+lines_between_sections=1
+lines_between_types=0
+force_alphabetical_sort_within_sections=true
+ensure_newline_before_comments=true
+combine_as_imports=true
+combine_star=true
+skip_gitignore=true
+src_paths=["core", ]
+skip_glob=[
+    ".git",
+    ".idea",
+    ".vscode",
+    "venv",
+    ".venv",
+]
+known_fastapi=["fastapi","starlette "]
+known_first_party=["core"]
+sections=[
+    "FUTURE",
+    "STDLIB",
+    "FASTAPI",
+    "THIRDPARTY",
+    "FIRSTPARTY",
+    "LOCALFOLDER",
+]

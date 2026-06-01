@@ -1,42 +1,55 @@
 from dataclasses import dataclass
 from typing import Iterable
 
-from domain.entities.messages import Chat, Message
+from domain.entities.messages import (
+    Chat,
+    Message,
+)
 from infrastructure.repositories.filters.messages import GetMessagesFilters
-from infrastructure.repositories.messages.base import BaseChatsRepository, BaseMessagesRepository
+from infrastructure.repositories.messages.base import (
+    BaseChatsRepository,
+    BaseMessagesRepository,
+)
 from logic.exceptions.messages import ChatNotFoundException
-from logic.queries.base import BaseQuery, BaseQueryHandler
+from logic.queries.base import (
+    BaseQuery,
+    BaseQueryHandler,
+)
 
 
 @dataclass(frozen=True)
 class GetChatQuery(BaseQuery):
     chat_oid: str
-    
+
+
 @dataclass(frozen=True)
 class GetMessagesQuery(BaseQuery):
     chat_oid: str
     filters: GetMessagesFilters
-    
+
+
 @dataclass(frozen=True)
 class GetChatQueryHandler(BaseQueryHandler):
     chats_repository: BaseChatsRepository
-    messages_repository: BaseMessagesRepository # TODO: Get messages independtly
-    
+    messages_repository: BaseMessagesRepository  # TODO: Get messages independtly
+
     async def handle(self, query: GetChatQuery) -> Chat:
         chat = await self.chats_repository.get_chat_by_oid(oid=query.chat_oid)
-  
+
         if not chat:
             raise ChatNotFoundException(chat_oid=query.chat_oid)
 
         return chat
-    
+
+
 @dataclass(frozen=True)
 class GetMessagesQueryHandler(BaseQueryHandler):
     messages_repository: BaseMessagesRepository
-    
+
     async def handle(self, query: GetMessagesQuery) -> Iterable[Message]:
         # TODO: Reading messages events
-        return await self.messages_repository.get_messages(
-            chat_oid=query.chat_oid, 
-            filters=query.filters
+        messages, _ = await self.messages_repository.get_messages(
+            chat_oid=query.chat_oid,
+            filters=query.filters,
         )
+        return messages

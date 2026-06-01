@@ -1,85 +1,101 @@
-from typing import Iterable
-
-from fastapi import Depends, status
-from fastapi.routing import APIRouter
+from fastapi import (
+    Depends,
+    status,
+)
 from fastapi.exceptions import HTTPException
-from punq import Container
+from fastapi.routing import APIRouter
 
 from application.api.messages.filters import GetMessagesFilters
 from application.api.messages.schemas import (
-    CreateChatRequestSchema, 
-    CreateChatResponseSchema, 
-    CreateMessageRequestSchema, 
+    CreateChatRequestSchema,
+    CreateChatResponseSchema,
+    CreateMessageRequestSchema,
     CreateMessageResponseSchema,
     GetMessagesQueryResponseSchema,
     ResponseChatSchema,
-    ResponseMessageSchema
+    ResponseMessageSchema,
 )
-from application.api.schemas import BaseQueryResponseSchema, ErrorSchema
+from application.api.schemas import ErrorSchema
+from domain.entities.messages import (
+    Chat,
+    Message,
+)
 from domain.exceptions.base import ApplicationException
-from logic.commands.messages import CreateChatCommand, CreateMessageCommand
+from logic.commands.messages import (
+    CreateChatCommand,
+    CreateMessageCommand,
+)
 from logic.init import init_container
 from logic.mediator.base import Mediator
-from logic.queries.messages import GetChatQuery, GetMessagesQuery
+from logic.queries.messages import (
+    GetChatQuery,
+    GetMessagesQuery,
+)
+from punq import Container
 
 router = APIRouter(
     tags=["Chat"],
 )
 
+
 @router.post(
-    "/", 
-    response_model=CreateChatResponseSchema, 
+    "/",
+    response_model=CreateChatResponseSchema,
     status_code=status.HTTP_201_CREATED,
     description="Endpoint creates new chat, if chat with that title already exists returns error 400",
     responses={
         status.HTTP_201_CREATED: {"model": CreateChatResponseSchema},
-        status.HTTP_400_BAD_REQUEST: {"model": ErrorSchema}
-    }
+        status.HTTP_400_BAD_REQUEST: {"model": ErrorSchema},
+    },
 )
 async def create_chat_handler(
-    schema: CreateChatRequestSchema, 
-    container: Container=Depends(init_container)
- ) -> CreateChatResponseSchema:
-    ''' Creates new chat '''
+    schema: CreateChatRequestSchema,
+    container: Container = Depends(init_container),
+) -> CreateChatResponseSchema:
+    '''Creates new chat'''
     mediator: Mediator = container.resolve(Mediator)
     try:
+        chat: Chat
         chat, *_ = await mediator.handle_command(CreateChatCommand(title=schema.title))
     except ApplicationException as exception:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, 
-            detail={"error": exception.message}
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={"error": exception.message},
         )
-    
+
     return CreateChatResponseSchema.from_entity(chat)
 
+
 @router.post(
-    "/{chat_oid}/messages", 
-    response_model=CreateMessageResponseSchema, 
+    "/{chat_oid}/messages",
+    response_model=CreateMessageResponseSchema,
     status_code=status.HTTP_201_CREATED,
     description="Endpoint creates new message",
     responses={
         status.HTTP_201_CREATED: {"model": CreateMessageResponseSchema},
-        status.HTTP_400_BAD_REQUEST: {"model": ErrorSchema}
-    }
+        status.HTTP_400_BAD_REQUEST: {"model": ErrorSchema},
+    },
 )
 async def create_message_handler(
-    schema: CreateMessageRequestSchema, 
+    schema: CreateMessageRequestSchema,
     chat_oid: str,
-    container: Container=Depends(init_container),
+    container: Container = Depends(init_container),
 ) -> CreateMessageResponseSchema:
-    ''' Creates new message '''
+    '''Creates new message'''
     mediator: Mediator = container.resolve(Mediator)
     try:
+        message: Message
         message, *_ = await mediator.handle_command(
-            CreateMessageCommand(text=schema.text, chat_oid=chat_oid)
+            CreateMessageCommand(text=schema.text, chat_oid=chat_oid),
         )
     except ApplicationException as exception:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, 
-            detail={"error": exception.message}
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={"error": exception.message},
         )
-    
+
     return CreateMessageResponseSchema.from_entity(message)
+
 
 @router.get(
     '/{chat_oid}/',
@@ -87,24 +103,25 @@ async def create_message_handler(
     description="Get certain chat",
     responses={
         status.HTTP_200_OK: {"model": ResponseChatSchema},
-        status.HTTP_400_BAD_REQUEST: {"model": ErrorSchema}
-    }
+        status.HTTP_400_BAD_REQUEST: {"model": ErrorSchema},
+    },
 )
 async def get_chat_handler(
     chat_oid: str,
-    container: Container=Depends(init_container),
+    container: Container = Depends(init_container),
 ) -> ResponseChatSchema:
-    ''' Get chat with messages '''
+    '''Get chat with messages'''
     mediator: Mediator = container.resolve(Mediator)
     try:
-        chat = await mediator.handle_query(GetChatQuery(chat_oid=chat_oid))
+        chat: Chat = await mediator.handle_query(GetChatQuery(chat_oid=chat_oid))
     except ApplicationException as exception:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, 
-            detail={"error": exception.message}
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={"error": exception.message},
         )
-    
+
     return ResponseChatSchema.from_entity(chat)
+
 
 @router.get(
     '/{chat_oid}/messages',
@@ -112,26 +129,26 @@ async def get_chat_handler(
     description="Get certain chat messages",
     responses={
         status.HTTP_200_OK: {"model": GetMessagesQueryResponseSchema},
-        status.HTTP_400_BAD_REQUEST: {"model": ErrorSchema}
-    }
+        status.HTTP_400_BAD_REQUEST: {"model": ErrorSchema},
+    },
 )
 async def get_chat_messages_handler(
     chat_oid: str,
     filters: GetMessagesFilters = Depends(),
-    container: Container=Depends(init_container),
+    container: Container = Depends(init_container),
 ) -> GetMessagesQueryResponseSchema:
     mediator: Mediator = container.resolve(Mediator)
-    
+
     try:
         messages, count = await mediator.handle_query(
-            GetMessagesQuery(chat_oid=chat_oid, filters=filters.to_infra())
+            GetMessagesQuery(chat_oid=chat_oid, filters=filters.to_infra()),
         )
     except ApplicationException as exception:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, 
-            detail={"error": exception.message}
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={"error": exception.message},
         )
-        
+
     return GetMessagesQueryResponseSchema(
         count=count,
         limit=filters.limit,
