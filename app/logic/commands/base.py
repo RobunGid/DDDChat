@@ -17,7 +17,7 @@ class BaseCommand(ABC):
     pass
 
 
-CT = TypeVar('CT', bound=BaseCommand)  # Command Type
+CT = TypeVar("CT", bound=BaseCommand)  # Command Type
 CR = TypeVar("CR", bound=Any)  # Command Result
 
 

@@ -5,7 +5,10 @@ from domain.entities.messages import (
     Chat,
     Message,
 )
-from infrastructure.repositories.filters.messages import GetMessagesFilters
+from infrastructure.repositories.filters.messages import (
+    GetChatsFilters,
+    GetMessagesFilters,
+)
 from infrastructure.repositories.messages.base import (
     BaseChatsRepository,
     BaseMessagesRepository,
@@ -29,7 +32,12 @@ class GetMessagesQuery(BaseQuery):
 
 
 @dataclass(frozen=True)
-class GetChatQueryHandler(BaseQueryHandler):
+class GetChatsQuery(BaseQuery):
+    filters: GetChatsFilters
+
+
+@dataclass(frozen=True)
+class GetChatQueryHandler(BaseQueryHandler[GetChatQuery, Chat]):
     chats_repository: BaseChatsRepository
     messages_repository: BaseMessagesRepository  # TODO: Get messages independtly
 
@@ -43,13 +51,31 @@ class GetChatQueryHandler(BaseQueryHandler):
 
 
 @dataclass(frozen=True)
-class GetMessagesQueryHandler(BaseQueryHandler):
+class GetMessagesQueryHandler(
+    BaseQueryHandler[GetMessagesQuery, tuple[Iterable[Message], int]],
+):
     messages_repository: BaseMessagesRepository
 
-    async def handle(self, query: GetMessagesQuery) -> Iterable[Message]:
+    async def handle(self, query: GetMessagesQuery) -> tuple[Iterable[Message], int]:
         # TODO: Reading messages events
-        messages, _ = await self.messages_repository.get_messages(
+        messages, count = await self.messages_repository.get_messages(
             chat_oid=query.chat_oid,
             filters=query.filters,
         )
-        return messages
+        return messages, count
+
+
+@dataclass(frozen=True)
+class GetChatsQueryHandler(
+    BaseQueryHandler[
+        GetChatsQuery,
+        tuple[Iterable[Chat], int],
+    ],
+):
+    chats_repository: BaseChatsRepository
+
+    async def handle(self, query: GetChatsQuery) -> tuple[Iterable[Chat], int]:
+        chat, count = await self.chats_repository.get_chats(
+            filters=query.filters,
+        )
+        return chat, count

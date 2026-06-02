@@ -15,7 +15,7 @@ class BaseQuery(ABC):
     pass
 
 
-QT = TypeVar('QT', bound=BaseQuery)  # Query Type
+QT = TypeVar("QT", bound=BaseQuery)  # Query Type
 QR = TypeVar("QR", bound=Any)  # Query Result
 
 

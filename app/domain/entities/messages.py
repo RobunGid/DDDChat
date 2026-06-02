@@ -26,7 +26,7 @@ class Chat(BaseEntity):
     messages: set[Message] = field(default_factory=set, kw_only=True)
 
     @classmethod
-    def create_chat(cls, title: Title) -> 'Chat':
+    def create_chat(cls, title: Title) -> "Chat":
         new_chat = cls(title=title)
         new_chat.register_event(
             NewChatCreatedEvent(

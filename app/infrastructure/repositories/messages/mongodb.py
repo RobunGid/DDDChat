@@ -8,7 +8,10 @@ from domain.entities.messages import (
     Chat,
     Message,
 )
-from infrastructure.repositories.filters.messages import GetMessagesFilters
+from infrastructure.repositories.filters.messages import (
+    GetChatsFilters,
+    GetMessagesFilters,
+)
 from infrastructure.repositories.messages.base import (
     BaseChatsRepository,
     BaseMessagesRepository,
@@ -39,13 +42,13 @@ class MongoDBChatsRepository(BaseChatsRepository, BaseMongoDBRepository):
     async def check_chat_exists_by_title(self, title: str) -> bool:
         return bool(
             await self._collection.find_one(
-                filter={'title': title},
+                filter={"title": title},
             ),
         )
 
     async def get_chat_by_oid(self, oid: str) -> Chat | None:
         chat_document = await self._collection.find_one(
-            filter={'oid': oid},
+            filter={"oid": oid},
         )
         if not chat_document:
             return None
@@ -55,6 +58,17 @@ class MongoDBChatsRepository(BaseChatsRepository, BaseMongoDBRepository):
         await self._collection.insert_one(
             convert_chat_entity_to_document(chat),
         )
+
+    async def get_chats(self, filters: GetChatsFilters) -> tuple[Iterable[Chat], int]:
+        cursor = self._collection.find().skip(filters.offset).limit(filters.limit)
+
+        chats = [
+            convert_chat_document_to_entity(chat_document)
+            async for chat_document in cursor
+        ]
+        count = await self._collection.count_documents(filter={})
+
+        return chats, count
 
 
 @dataclass
@@ -70,7 +84,7 @@ class MongoDBMessagesRepository(BaseMessagesRepository, BaseMongoDBRepository):
         filters: GetMessagesFilters,
     ) -> tuple[Iterable[Message], int]:
         cursor = (
-            self._collection.find({'chat_oid': chat_oid})
+            self._collection.find({"chat_oid": chat_oid})
             .skip(filters.offset)
             .limit(filters.limit)
         )
@@ -79,6 +93,6 @@ class MongoDBMessagesRepository(BaseMessagesRepository, BaseMongoDBRepository):
             convert_message_document_to_entity(message_document)
             async for message_document in cursor
         ]
-        count = await self._collection.count_documents(filter={'chat_oid': chat_oid})
+        count = await self._collection.count_documents(filter={"chat_oid": chat_oid})
 
         return messages, count

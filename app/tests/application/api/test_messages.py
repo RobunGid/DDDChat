@@ -22,7 +22,7 @@ async def test_create_chat_success(
     assert response.is_success
 
     json_data = response.json()
-    assert json_data['title'] == title
+    assert json_data["title"] == title
 
 
 @pytest.mark.asyncio
@@ -38,7 +38,7 @@ async def test_create_chat_fail_title_too_long(
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.json()
 
     json_data = response.json()
-    assert json_data['detail']['error']
+    assert json_data["detail"]["error"]
 
 
 @pytest.mark.asyncio
@@ -47,9 +47,9 @@ async def test_create_chat_fail_title_empty(
     client: TestClient,
 ):
     url = app.url_path_for("create_chat_handler")
-    response: Response = client.post(url=url, json={"title": ''})
+    response: Response = client.post(url=url, json={"title": ""})
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.json()
 
     json_data = response.json()
-    assert json_data['detail']['error']
+    assert json_data["detail"]["error"]

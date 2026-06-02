@@ -1,16 +1,28 @@
 from pydantic import BaseModel
 
 from infrastructure.repositories.filters.messages import (
-    GetMessagesFilters as GetMessagesInfraFilters,
+    GetChatsFilters,
+    GetMessagesFilters,
 )
 
 
-class GetMessagesFilters(BaseModel):
+class GetMessagesFiltersSchema(BaseModel):
     limit: int = 10
     offset: int = 0
 
-    def to_infra(self):
-        return GetMessagesInfraFilters(
+    def to_infrastructure(self):
+        return GetMessagesFilters(
+            limit=self.limit,
+            offset=self.offset,
+        )
+
+
+class GetChatsFiltersSchema(BaseModel):
+    limit: int = 10
+    offset: int = 0
+
+    def to_infrastructure(self):
+        return GetChatsFilters(
             limit=self.limit,
             offset=self.offset,
         )

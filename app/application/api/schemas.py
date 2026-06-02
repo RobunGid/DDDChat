@@ -1,5 +1,6 @@
 from typing import (
     Generic,
+    Iterable,
     TypeVar,
 )
 
@@ -10,7 +11,7 @@ class ErrorSchema(BaseModel):
     error: str
 
 
-IT = TypeVar('IT', bound=BaseModel)  # Items
+IT = TypeVar("IT", bound=Iterable[BaseModel])  # Items
 
 
 class BaseQueryResponseSchema(BaseModel, Generic[IT]):

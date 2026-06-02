@@ -15,10 +15,10 @@ from domain.values.messages import (
 
 def convert_message_entity_to_document(message: Message) -> dict:
     return {
-        'oid': message.oid,
-        'created_at': message.created_at,
-        'text': message.text.as_generic_type(),
-        'chat_oid': message.chat_oid,
+        "oid": message.oid,
+        "created_at": message.created_at,
+        "text": message.text.as_generic_type(),
+        "chat_oid": message.chat_oid,
     }
 
 
@@ -27,15 +27,15 @@ def convert_message_document_to_entity(message_document: Mapping[str, Any]) -> M
         text=Text(message_document["text"]),
         oid=message_document["oid"],
         created_at=message_document["created_at"],
-        chat_oid=message_document['chat_oid'],
+        chat_oid=message_document["chat_oid"],
     )
 
 
 def convert_chat_entity_to_document(chat: Chat) -> dict:
     return {
-        'oid': chat.oid,
-        'title': chat.title.as_generic_type(),
-        'created_at': chat.created_at,
+        "oid": chat.oid,
+        "title": chat.title.as_generic_type(),
+        "created_at": chat.created_at,
     }
 
 

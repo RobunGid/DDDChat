@@ -9,11 +9,11 @@ class NewMessageReceivedEvent(BaseEvent):
     message_oid: str
     message_text: str
     chat_oid: str
-    title: ClassVar[str] = 'New Message Received'
+    title: ClassVar[str] = "New Message Received"
 
 
 @dataclass
 class NewChatCreatedEvent(BaseEvent):
     chat_oid: str
     chat_title: str
-    title: ClassVar[str] = 'New Chat Created'
+    title: ClassVar[str] = "New Chat Created"

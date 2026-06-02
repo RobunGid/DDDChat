@@ -5,7 +5,7 @@ description = ""
 authors = [
     {name = "Robun Gid"}
 ]
-requires-python = "^3.11"
+requires-python = ">=3.14"
 dependencies = [
     "fastapi[httpx] (>=0.136.3,<0.137.0)",
     "motor (>=3.7.1,<4.0.0)",

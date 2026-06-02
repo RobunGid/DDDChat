@@ -9,7 +9,10 @@ from domain.entities.messages import (
     Chat,
     Message,
 )
-from infrastructure.repositories.filters.messages import GetMessagesFilters
+from infrastructure.repositories.filters.messages import (
+    GetChatsFilters,
+    GetMessagesFilters,
+)
 
 
 @dataclass
@@ -24,6 +27,13 @@ class BaseChatsRepository(ABC):
 
     @abstractmethod
     async def add_chat(self, chat: Chat) -> None:
+        pass
+
+    @abstractmethod
+    async def get_chats(
+        self,
+        filters: GetChatsFilters,
+    ) -> tuple[Iterable[Chat], int]:
         pass
 
 

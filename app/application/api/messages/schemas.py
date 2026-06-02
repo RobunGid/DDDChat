@@ -18,7 +18,7 @@ class CreateChatResponseSchema(BaseModel):
     title: str
 
     @classmethod
-    def from_entity(cls, chat: Chat) -> 'CreateChatResponseSchema':
+    def from_entity(cls, chat: Chat) -> "CreateChatResponseSchema":
         return cls(
             oid=chat.oid,
             title=chat.title.as_generic_type(),
@@ -34,7 +34,7 @@ class CreateMessageResponseSchema(BaseModel):
     text: str
 
     @classmethod
-    def from_entity(cls, message: Message) -> 'CreateMessageResponseSchema':
+    def from_entity(cls, message: Message) -> "CreateMessageResponseSchema":
         return cls(
             oid=message.oid,
             text=message.text.as_generic_type(),
@@ -48,7 +48,7 @@ class ResponseMessageSchema(BaseModel):
     created_at: datetime
 
     @classmethod
-    def from_entity(cls, message: Message) -> 'ResponseMessageSchema':
+    def from_entity(cls, message: Message) -> "ResponseMessageSchema":
         return cls(
             oid=message.oid,
             text=message.text.as_generic_type(),
@@ -63,7 +63,7 @@ class ResponseChatSchema(BaseModel):
     created_at: datetime
 
     @classmethod
-    def from_entity(cls, chat: Chat) -> 'ResponseChatSchema':
+    def from_entity(cls, chat: Chat) -> "ResponseChatSchema":
         return cls(
             oid=chat.oid,
             title=chat.title.as_generic_type(),
@@ -71,5 +71,11 @@ class ResponseChatSchema(BaseModel):
         )
 
 
-class GetMessagesQueryResponseSchema(BaseQueryResponseSchema):
-    items: list[ResponseMessageSchema]
+class GetMessagesQueryResponseSchema(
+    BaseQueryResponseSchema[list[ResponseMessageSchema]],
+):
+    pass
+
+
+class GetChatsQueryResponseSchema(BaseQueryResponseSchema[list[ResponseChatSchema]]):
+    pass

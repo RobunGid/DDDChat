@@ -31,7 +31,7 @@ class NewMessageReceivedEventHandler(EventHandler[NewMessageReceivedEvent, None]
 
 @dataclass
 class NewMessageReceivedFromBrokerEvent(IntegrationEvent):
-    event_title: ClassVar[str] = 'New Message From Broker Received'
+    event_title: ClassVar[str] = "New Message From Broker Received"
 
     message_text: str
     message_oid: str
