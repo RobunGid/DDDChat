@@ -45,7 +45,9 @@ class ConnectionManager(BaseConnectionManager):
 
         if key not in self.lock_map:
             self.lock_map[key] = asyncio.Lock()
-        self.connections_map[key].append(websocket)
+        async with self.lock_map[key]:
+            # TODO: Check is chat in deleting process
+            self.connections_map[key].append(websocket)
 
     async def remove_connection(self, websocket: WebSocket, key: str):
         async with self.lock_map[key]:

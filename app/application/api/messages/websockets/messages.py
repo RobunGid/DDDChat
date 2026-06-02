@@ -22,6 +22,7 @@ async def message_handlers(
     container: Container = Depends(init_container),
 ):
     connection_manager: BaseConnectionManager = container.resolve(BaseConnectionManager)
+    # TODO: check is chat exists before connect to websocket
     await connection_manager.accept_connection(websocket=websocket, key=str(chat_oid))
 
     try:
