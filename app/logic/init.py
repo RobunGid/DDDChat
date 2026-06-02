@@ -67,6 +67,7 @@ def _init_container() -> Container:
     config: Config = container.resolve(Config)
 
     def create_mongodb_client():
+        print(config.mongodb_connection_uri, 234892384924)
         return AsyncIOMotorClient(
             config.mongodb_connection_uri,
             serverSelectionTimeoutMS=3000,

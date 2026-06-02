@@ -44,11 +44,11 @@ app-logs:
 messaging-logs:
 	${DC} -f ${MESSAGING_FILE} logs -f
 
-.PHONE: all
+.PHONY: all
 all:
 	${DC} -f ${APP_FILE} -f ${STORAGES_FILE} -f ${MESSAGING_FILE} ${ENV} up --build -d
 
-.PHONE: all-down
+.PHONY: all-down
 all-down:
 	${DC} -f ${APP_FILE} -f ${STORAGES_FILE} -f ${MESSAGING_FILE} ${ENV} down
 

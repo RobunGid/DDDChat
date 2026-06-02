@@ -6,6 +6,15 @@ services:
       - '27017:27017'
     volumes:
       - dbdata6:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME:?}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:?}
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: true
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping').ok", "--quiet"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
     networks:
       - backend
   mongo-express:
@@ -15,10 +24,10 @@ services:
     ports:  
       - "28081:8081"
     environment:
-      ME_CONFIG_MONGODB_SERVER: mongodb
-      ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_DB_ADMIN_USERNAME}
-      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_DB_ADMIN_PASSWORD}
-      ME_CONFIG_MONGODB_URL: mongodb://mongodb:27017/
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_USERNAME:?}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_PASSWORD:?}
+      ME_CONFIG_MONGODB_URL: mongodb://${MONGO_USERNAME:?}:${MONGO_PASSWORD:?}@mongodb:27017/
+      ME_CONFIG_BASICAUTH: false
     depends_on:
       - mongodb
     networks:
