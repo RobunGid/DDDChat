@@ -5,6 +5,8 @@ from fastapi import (
 from fastapi.exceptions import HTTPException
 from fastapi.routing import APIRouter
 
+from punq import Container
+
 from application.api.messages.filters import GetMessagesFilters
 from application.api.messages.schemas import (
     CreateChatRequestSchema,
@@ -31,7 +33,6 @@ from logic.queries.messages import (
     GetChatQuery,
     GetMessagesQuery,
 )
-from punq import Container
 
 router = APIRouter(
     tags=["Chat"],

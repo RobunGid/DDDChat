@@ -2,6 +2,8 @@ from datetime import datetime
 from uuid import uuid4
 
 import pytest
+from faker import Faker
+
 from domain.entities.messages import (
     Chat,
     Message,
@@ -12,7 +14,6 @@ from domain.values.messages import (
     Text,
     Title,
 )
-from faker import Faker
 
 
 def test_create_message_success_short_text(faker: Faker):

@@ -1,7 +1,8 @@
 import pytest
+from faker import Faker
+
 from domain.entities.messages import Chat
 from domain.values.messages import Title
-from faker import Faker
 from infrastructure.repositories.messages.base import BaseChatsRepository
 from infrastructure.repositories.messages.memory import MemoryChatsRepository
 from logic.commands.messages import CreateChatCommand

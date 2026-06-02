@@ -6,6 +6,12 @@ from aiokafka import (
     AIOKafkaConsumer,
     AIOKafkaProducer,
 )
+from motor.motor_asyncio import AsyncIOMotorClient
+from punq import (
+    Container,
+    Scope,
+)
+
 from domain.events.messages import (
     NewChatCreatedEvent,
     NewMessageReceivedEvent,
@@ -43,11 +49,6 @@ from logic.queries.messages import (
     GetChatQueryHandler,
     GetMessagesQuery,
     GetMessagesQueryHandler,
-)
-from motor.motor_asyncio import AsyncIOMotorClient
-from punq import (
-    Container,
-    Scope,
 )
 from settings.config import Config
 
