@@ -26,3 +26,8 @@ class EventHandler(ABC, Generic[ET, ER]):
     @abstractmethod
     async def handle(self, event: ET) -> ER:
         pass
+
+
+@dataclass
+class IntegrationEvent(BaseEvent, ABC):
+    pass

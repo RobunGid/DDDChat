@@ -17,12 +17,3 @@ class NewChatCreatedEvent(BaseEvent):
     chat_oid: str
     chat_title: str
     title: ClassVar[str] = 'New Chat Created'
-
-
-@dataclass
-class NewMessageReceivedFromBrokerEvent(BaseEvent):
-    event_title: ClassVar[str] = 'New Message From Broker Received'
-
-    message_text: str
-    message_oid: str
-    chat_oid: str

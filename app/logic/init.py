@@ -9,7 +9,6 @@ from aiokafka import (
 from domain.events.messages import (
     NewChatCreatedEvent,
     NewMessageReceivedEvent,
-    NewMessageReceivedFromBrokerEvent,
 )
 from infrastructure.message_brokers.base import BaseMessageBroker
 from infrastructure.message_brokers.kafka import KafkaMessageBroker
@@ -34,6 +33,7 @@ from logic.commands.messages import (
 from logic.events.messages import (
     NewChatCreatedEventHandler,
     NewMessageReceivedEventHandler,
+    NewMessageReceivedFromBrokerEvent,
     NewMessageReceivedFromBrokerEventHandler,
 )
 from logic.mediator.base import Mediator

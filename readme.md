@@ -23,3 +23,4 @@
 * `make app-down` - down application and all infrastructure
 * `make app-shell` - run app container shell
 * `make test` - run app unit tests
+* `poetry run pre-commit run --all-files` - run all pre-commit hooks (linters)
