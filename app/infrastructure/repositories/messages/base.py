@@ -36,6 +36,10 @@ class BaseChatsRepository(ABC):
     ) -> tuple[Iterable[Chat], int]:
         pass
 
+    @abstractmethod
+    async def delete_chat_by_oid(self, oid: str) -> None:
+        pass
+
 
 @dataclass
 class BaseMessagesRepository(ABC):

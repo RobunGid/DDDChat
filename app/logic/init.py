@@ -13,6 +13,7 @@ from punq import (
 )
 
 from domain.events.messages import (
+    ChatDeletedEvent,
     NewChatCreatedEvent,
     NewMessageReceivedEvent,
 )
@@ -35,8 +36,11 @@ from logic.commands.messages import (
     CreateChatCommandHandler,
     CreateMessageCommand,
     CreateMessageCommandHandler,
+    DeleteChatCommand,
+    DeleteChatCommandHandler,
 )
 from logic.events.messages import (
+    ChatDeletedEventHandler,
     NewChatCreatedEventHandler,
     NewMessageReceivedEventHandler,
     NewMessageReceivedFromBrokerEvent,
@@ -67,7 +71,6 @@ def _init_container() -> Container:
     config: Config = container.resolve(Config)
 
     def create_mongodb_client():
-        print(config.mongodb_connection_uri, 234892384924)
         return AsyncIOMotorClient(
             config.mongodb_connection_uri,
             serverSelectionTimeoutMS=3000,
@@ -136,6 +139,10 @@ def _init_container() -> Container:
             _mediator=mediator,
             chats_repository=container.resolve(BaseChatsRepository),
         )
+        delete_chat_handler = DeleteChatCommandHandler(
+            _mediator=mediator,
+            chats_repository=container.resolve(BaseChatsRepository),
+        )
         create_message_handler = CreateMessageCommandHandler(
             _mediator=mediator,
             messages_repository=container.resolve(BaseMessagesRepository),
@@ -158,6 +165,11 @@ def _init_container() -> Container:
             broker_topic=config.new_message_received_event_topic,
             connection_manager=container.resolve(BaseConnectionManager),
         )
+        chat_deleted_event_handler = ChatDeletedEventHandler(
+            broker_topic=config.chats_deleted_event_topic,
+            message_broker=container.resolve(BaseMessageBroker),
+            connection_manager=container.resolve(BaseConnectionManager),
+        )
         # Events
         mediator.register_event(
             NewChatCreatedEvent,
@@ -171,10 +183,18 @@ def _init_container() -> Container:
             NewMessageReceivedFromBrokerEvent,
             [new_message_received_from_broker_event_handler],
         )
+        mediator.register_event(
+            ChatDeletedEvent,
+            [chat_deleted_event_handler],
+        )
         # Commands
         mediator.register_command(
             CreateChatCommand,
             [create_chat_handler],
+        )
+        mediator.register_command(
+            DeleteChatCommand,
+            [delete_chat_handler],
         )
         mediator.register_command(
             CreateMessageCommand,

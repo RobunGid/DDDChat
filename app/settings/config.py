@@ -17,6 +17,10 @@ class Config(BaseSettings):
         default="new-chats-topic",
         alias="NEW_CHATS_EVENT_TOPIC",
     )
+    chats_deleted_event_topic: str = Field(
+        default="chats-deleted-topic",
+        alias="CHATS_DELETED_EVENT_TOPIC",
+    )
     new_message_received_event_topic: str = Field(
         default="new-messages",
         alias="NEW_MESSAGE_RECEIVED_EVENT_TOPIC",
