@@ -4,10 +4,7 @@ from typing import Iterable
 
 from motor.core import AgnosticClient
 
-from domain.entities.messages import (
-    Chat,
-    Message,
-)
+from domain.entities.messages import Chat, Message
 from infrastructure.repositories.filters.messages import (
     GetChatsFilters,
     GetMessagesFilters,
@@ -32,9 +29,7 @@ class BaseMongoDBRepository(ABC):
 
     @property
     def _collection(self):
-        return self.mongo_db_client[self.mongo_db_db_name][
-            self.mongo_db_collection_name
-        ]
+        return self.mongo_db_client[self.mongo_db_db_name][self.mongo_db_collection_name]
 
 
 @dataclass
@@ -62,10 +57,7 @@ class MongoDBChatsRepository(BaseChatsRepository, BaseMongoDBRepository):
     async def get_chats(self, filters: GetChatsFilters) -> tuple[Iterable[Chat], int]:
         cursor = self._collection.find().skip(filters.offset).limit(filters.limit)
 
-        chats = [
-            convert_chat_document_to_entity(chat_document)
-            async for chat_document in cursor
-        ]
+        chats = [convert_chat_document_to_entity(chat_document) async for chat_document in cursor]
         count = await self._collection.count_documents(filter={})
 
         return chats, count
@@ -83,16 +75,9 @@ class MongoDBMessagesRepository(BaseMessagesRepository, BaseMongoDBRepository):
         chat_oid: str,
         filters: GetMessagesFilters,
     ) -> tuple[Iterable[Message], int]:
-        cursor = (
-            self._collection.find({"chat_oid": chat_oid})
-            .skip(filters.offset)
-            .limit(filters.limit)
-        )
+        cursor = self._collection.find({"chat_oid": chat_oid}).skip(filters.offset).limit(filters.limit)
 
-        messages = [
-            convert_message_document_to_entity(message_document)
-            async for message_document in cursor
-        ]
+        messages = [convert_message_document_to_entity(message_document) async for message_document in cursor]
         count = await self._collection.count_documents(filter={"chat_oid": chat_oid})
 
         return messages, count

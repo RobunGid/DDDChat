@@ -152,12 +152,10 @@ def _init_container() -> Container:
             message_broker=container.resolve(BaseMessageBroker),
             connection_manager=container.resolve(BaseConnectionManager),
         )
-        new_message_received_from_broker_event_handler = (
-            NewMessageReceivedFromBrokerEventHandler(
-                message_broker=container.resolve(BaseMessageBroker),
-                broker_topic=config.new_message_received_event_topic,
-                connection_manager=container.resolve(BaseConnectionManager),
-            )
+        new_message_received_from_broker_event_handler = NewMessageReceivedFromBrokerEventHandler(
+            message_broker=container.resolve(BaseMessageBroker),
+            broker_topic=config.new_message_received_event_topic,
+            connection_manager=container.resolve(BaseConnectionManager),
         )
         # Events
         mediator.register_event(

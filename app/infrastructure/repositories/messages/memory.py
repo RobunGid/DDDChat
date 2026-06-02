@@ -2,8 +2,10 @@ from dataclasses import (
     dataclass,
     field,
 )
+from typing import Iterable
 
 from domain.entities.messages import Chat
+from infrastructure.repositories.filters.messages import GetChatsFilters
 from infrastructure.repositories.messages.base import BaseChatsRepository
 
 
@@ -14,11 +16,7 @@ class MemoryChatsRepository(BaseChatsRepository):
     async def check_chat_exists_by_title(self, title: str) -> bool:
         try:
             return bool(
-                next(
-                    chat
-                    for chat in self._saved_chats
-                    if chat.title.as_generic_type() == title
-                ),
+                next(chat for chat in self._saved_chats if chat.title.as_generic_type() == title),
             )
         except StopIteration:
             return False
@@ -31,3 +29,6 @@ class MemoryChatsRepository(BaseChatsRepository):
             return next(chat for chat in self._saved_chats if chat.oid == oid)
         except StopIteration:
             return None
+
+    async def get_chats(self, filters: GetChatsFilters) -> tuple[Iterable[Chat], int]:
+        return self._saved_chats, len(self._saved_chats)

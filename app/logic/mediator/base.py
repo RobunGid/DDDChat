@@ -72,9 +72,7 @@ class Mediator(
         result = []
 
         for event in events:
-            handlers: Iterable[EventHandler] = self.events_map[
-                cast(ET, event.__class__)
-            ]
+            handlers: Iterable[EventHandler] = self.events_map[cast(ET, event.__class__)]
             result.extend([await handler.handle(event) for handler in handlers])
 
         return result
