@@ -10,7 +10,10 @@ from fastapi.routing import APIRouter
 from punq import Container
 
 from infrastructure.websockets.managers import BaseConnectionManager
+from logic.exceptions.messages import ChatNotFoundException
 from logic.init import init_container
+from logic.mediator.base import Mediator
+from logic.queries.messages import GetChatQuery
 
 router = APIRouter(tags=["chats"])
 
@@ -22,7 +25,16 @@ async def message_handlers(
     container: Container = Depends(init_container),
 ):
     connection_manager: BaseConnectionManager = container.resolve(BaseConnectionManager)
-    # TODO: check is chat exists before connect to websocket
+    mediator: Mediator = container.resolve(Mediator)
+
+    try:
+        await mediator.handle_query(GetChatQuery(chat_oid=str(chat_oid)))
+    except ChatNotFoundException as exception:
+        await websocket.accept()
+        await websocket.send_json(data={"error": exception.message})
+        await websocket.close()
+        return
+
     await connection_manager.accept_connection(websocket=websocket, key=str(chat_oid))
 
     try:
