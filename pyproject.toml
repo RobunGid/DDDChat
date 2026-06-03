@@ -19,6 +19,9 @@ dependencies = [
     "aiojobs (>=1.4.0,<2.0.0)",
     "punq (>=0.7.0,<0.8.0)",
     "aiogram (>=3.28.2,<4.0.0)",
+    "fluent-runtime (>=0.4.0,<0.5.0)",
+    "aiogram-i18n[runtime] (>=1.5,<2.0)",
+    "dishka (>=1.10.1,<2.0.0)",
 ]
 
 
@@ -122,3 +125,6 @@ docstring-code-line-length = "dynamic"
 
 [tool.black]
 line-length = 120
+
+[tool.mypy]
+explicit_package_bases = true

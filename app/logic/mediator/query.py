@@ -6,17 +6,15 @@ from dataclasses import (
     dataclass,
     field,
 )
-from typing import Generic
 
 from logic.queries.base import (
+    BaseQuery,
     BaseQueryHandler,
-    QR,
-    QT,
 )
 
 
 @dataclass(eq=False)
-class QueryMediator(ABC, Generic[QT, QR]):
+class QueryMediator[QT: BaseQuery, QR](ABC):
     queries_map: dict[QT, BaseQueryHandler[QT, QR]] = field(
         default_factory=dict,
         kw_only=True,

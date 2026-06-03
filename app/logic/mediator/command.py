@@ -8,20 +8,17 @@ from dataclasses import (
     field,
 )
 from typing import (
-    Generic,
     Iterable,
 )
 
 from logic.commands.base import (
     BaseCommand,
     CommandHandler,
-    CR,
-    CT,
 )
 
 
 @dataclass(eq=False)
-class CommandMediator(ABC, Generic[CT, CR]):
+class CommandMediator[CT, CR](ABC):
     commands_map: dict[CT, list[CommandHandler]] = field(
         default_factory=lambda: defaultdict(list),
         kw_only=True,

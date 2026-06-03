@@ -5,7 +5,6 @@ from dataclasses import (
 )
 from typing import (
     cast,
-    Generic,
     Iterable,
 )
 
@@ -13,12 +12,8 @@ from domain.events.base import BaseEvent
 from logic.commands.base import (
     BaseCommand,
     CommandHandler,
-    CR,
-    CT,
 )
 from logic.events.base import (
-    ER,
-    ET,
     EventHandler,
 )
 from logic.exceptions.mediator import CommandHandlersNotRegisteredException
@@ -28,17 +23,14 @@ from logic.mediator.query import QueryMediator
 from logic.queries.base import (
     BaseQuery,
     BaseQueryHandler,
-    QR,
-    QT,
 )
 
 
 @dataclass(eq=False)
-class Mediator(
+class Mediator[ET, ER, QT, QR, CT, CR](
     EventMediator,
     QueryMediator,
     CommandMediator,
-    Generic[ET, ER, QT, QR, CT, CR],
 ):
     events_map: dict[ET, list[EventHandler]] = field(
         default_factory=lambda: defaultdict(list),
