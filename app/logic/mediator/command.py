@@ -36,4 +36,5 @@ class CommandMediator(ABC, Generic[CT, CR]):
         self.commands_map[command].extend(command_handlers)
 
     @abstractmethod
-    async def handle_command(self, command: BaseCommand) -> Iterable[CR]: ...
+    async def handle_command(self, command: BaseCommand) -> Iterable[CR]:
+        pass
