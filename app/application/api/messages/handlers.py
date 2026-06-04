@@ -18,6 +18,8 @@ from application.api.messages.schemas import (
     CreateMessageResponseSchema,
     GetChatsQueryResponseSchema,
     GetMessagesQueryResponseSchema,
+    RequestAddTelegramListenerSchema,
+    ResponseAddTelegramListenerSchema,
     ResponseChatSchema,
     ResponseMessageSchema,
 )
@@ -28,6 +30,7 @@ from domain.entities.messages import (
 )
 from domain.exceptions.base import ApplicationException
 from logic.commands.messages import (
+    AddTelegramSupportListenerCommand,
     CreateChatCommand,
     CreateMessageCommand,
     DeleteChatCommand,
@@ -54,12 +57,12 @@ router = APIRouter(
         status.HTTP_201_CREATED: {"model": CreateChatResponseSchema},
         status.HTTP_400_BAD_REQUEST: {"model": ErrorSchema},
     },
+    operation_id="createChat",
 )
 async def create_chat_handler(
     schema: CreateChatRequestSchema,
     container: Container = Depends(init_container),
 ) -> CreateChatResponseSchema:
-    """Creates new chat"""
     mediator: Mediator = container.resolve(Mediator)
     try:
         chat: Chat
@@ -82,13 +85,13 @@ async def create_chat_handler(
         status.HTTP_201_CREATED: {"model": CreateMessageResponseSchema},
         status.HTTP_400_BAD_REQUEST: {"model": ErrorSchema},
     },
+    operation_id="createMessage",
 )
 async def create_message_handler(
     schema: CreateMessageRequestSchema,
     chat_oid: str,
     container: Container = Depends(init_container),
 ) -> CreateMessageResponseSchema:
-    """Creates new message"""
     mediator: Mediator = container.resolve(Mediator)
     try:
         message: Message
@@ -112,12 +115,12 @@ async def create_message_handler(
         status.HTTP_200_OK: {"model": ResponseChatSchema},
         status.HTTP_400_BAD_REQUEST: {"model": ErrorSchema},
     },
+    operation_id="getChat",
 )
 async def get_chat_handler(
     chat_oid: str,
     container: Container = Depends(init_container),
 ) -> ResponseChatSchema:
-    """Get chat with messages"""
     mediator: Mediator = container.resolve(Mediator)
     try:
         chat: Chat = await mediator.handle_query(GetChatQuery(chat_oid=chat_oid))
@@ -138,6 +141,7 @@ async def get_chat_handler(
         status.HTTP_200_OK: {"model": GetMessagesQueryResponseSchema},
         status.HTTP_400_BAD_REQUEST: {"model": ErrorSchema},
     },
+    operation_id="getChatMessageList",
 )
 async def get_chat_messages_handler(
     chat_oid: str,
@@ -172,6 +176,7 @@ async def get_chat_messages_handler(
         status.HTTP_200_OK: {"model": GetChatsQueryResponseSchema},
         status.HTTP_400_BAD_REQUEST: {"model": ErrorSchema},
     },
+    operation_id="getChatList",
 )
 async def get_chats_handler(
     filters: GetChatsFiltersSchema = Depends(),
@@ -204,6 +209,7 @@ async def get_chats_handler(
     responses={
         status.HTTP_400_BAD_REQUEST: {"model": ErrorSchema},
     },
+    operation_id="deleteChat",
 )
 async def delete_chat_handler(
     chat_oid: str,
@@ -218,3 +224,33 @@ async def delete_chat_handler(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={"error": exception.message},
         )
+
+
+@router.post(
+    "/{chat_oid}/",
+    status_code=status.HTTP_201_CREATED,
+    description="Add telegram support listener to chat",
+    responses={
+        status.HTTP_400_BAD_REQUEST: {"model": ErrorSchema},
+        status.HTTP_201_CREATED: {"model": ResponseAddTelegramListenerSchema},
+    },
+    response_model=ResponseAddTelegramListenerSchema,
+    operation_id="addTelegramListenerToChat",
+)
+async def add_telegram_support_listener_handler(
+    chat_oid: str,
+    schema: RequestAddTelegramListenerSchema,
+    container: Container = Depends(init_container),
+) -> ResponseAddTelegramListenerSchema:
+    mediator: Mediator = container.resolve(Mediator)
+
+    try:
+        chat_listener, *_ = await mediator.handle_command(
+            AddTelegramSupportListenerCommand(chat_oid=chat_oid, telegram_chat_id=schema.telegram_chat_id),
+        )
+    except ApplicationException as exception:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={"error": exception.message},
+        )
+    return ResponseAddTelegramListenerSchema.from_entity(chat_listener)

@@ -65,6 +65,9 @@ class MongoDBChatsRepository(BaseChatsRepository, BaseMongoDBRepository):
     async def delete_chat_by_oid(self, oid: str) -> None:
         await self._collection.delete_one(filter={"oid": oid})
 
+    async def add_telegram_support_listener(self, chat_oid: str, telegram_chat_id: str) -> None:
+        await self._collection.update_one(filter={"oid": chat_oid}, update={"$push": {"listeners": telegram_chat_id}})
+
 
 @dataclass
 class MongoDBMessagesRepository(BaseMessagesRepository, BaseMongoDBRepository):
