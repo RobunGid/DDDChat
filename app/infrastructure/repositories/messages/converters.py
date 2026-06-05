@@ -37,6 +37,7 @@ def convert_chat_entity_to_document(chat: Chat) -> dict:
 
 
 def convert_chat_listener_document_to_entity(listener_id: str) -> ChatListener:
+    # TODO: accept listener entity
     return ChatListener(oid=listener_id)
 
 

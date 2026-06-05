@@ -7,6 +7,7 @@ from typing import Iterable
 
 from domain.entities.messages import (
     Chat,
+    ChatListener,
     Message,
 )
 from infrastructure.repositories.filters.messages import (
@@ -42,6 +43,10 @@ class BaseChatsRepository(ABC):
 
     @abstractmethod
     async def add_telegram_support_listener(self, chat_oid: str, telegram_chat_id: str) -> None:
+        pass
+
+    @abstractmethod
+    async def get_chat_listeners(self, chat_oid: str) -> Iterable[ChatListener]:
         pass
 
 
