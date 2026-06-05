@@ -84,9 +84,13 @@ tg-bot-consumer:
 	${DC} -f ${TG_BOT_CONSUMER_FILE} ${ENV} up --build -d
 
 .PHONY: tg-bot-consumer-down
-tg-bot-consumer0down:
-	${DC} -f ${TG_BOT_CONSUMER_CONTAINER} down	
+tg-bot-consumer-down:
+	${DC} -f ${TG_BOT_CONSUMER_FILE} ${ENV} down	
 
 .PHONY: tg-bot-consumer-logs
 tg-bot-consumer-logs:
 	${LOGS} ${TG_BOT_CONSUMER_CONTAINER} -f
+
+.PHONY: tg-bot-consumer-shell
+tg-bot-consumer-shell:
+	${EXEC} ${TG_BOT_CONSUMER_CONTAINER} bash

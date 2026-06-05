@@ -4,7 +4,7 @@ services:
       context: ..
       dockerfile: tg_bot/Dockerfile
     container_name: telegram-bot-consumer
-    command: "faststream run consumers.main:app"
+    command: "faststream run --factory consumers.main:get_app --reload --app-dir ."
     restart: always
     environment:
       TG_BOT_TOKEN: ${TG_BOT_TOKEN:?}
@@ -13,6 +13,8 @@ services:
       MONGO_DB_CONNECTION_URI: ${MONGO_DB_CONNECTION_URI:?}
     networks:
       - backend
+    volumes:
+      - ../tg_bot/:/app/
 
 networks:
   backend:
