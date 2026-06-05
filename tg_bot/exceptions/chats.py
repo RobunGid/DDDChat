@@ -10,3 +10,13 @@ class ChatListRequestException(ApplicationException):
     @property
     def message(self):
         return "Could not get chats"
+
+
+@dataclass(frozen=True, eq=False)
+class ChatListeneListRequestException(ApplicationException):
+    status_code: int
+    response_content: str
+
+    @property
+    def message(self):
+        return "Could not get chat listeners"

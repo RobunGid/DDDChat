@@ -1,3 +1,4 @@
+from aiogram import Bot
 from dishka import provide, Provider, Scope
 from httpx import AsyncClient
 from services.web import BaseChatWebService, ChatWebService
@@ -17,3 +18,7 @@ class DefaultProvider(Provider):
     @provide(scope=Scope.APP)
     def get_chat_web_service(self) -> BaseChatWebService:
         return ChatWebService(http_client=self.get_http_client(), base_url=self.get_config().web_api_base_url)
+
+    @provide(scope=Scope.REQUEST)
+    def get_telegram_bot(self) -> Bot:
+        return Bot(token=self.get_config().tg_bot_token)

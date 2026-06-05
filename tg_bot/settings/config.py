@@ -7,6 +7,15 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Config(BaseSettings):
     tg_bot_token: str = Field(alias="TG_BOT_TOKEN")
     web_api_base_url: str = Field(alias="WEB_API_BASE_URL")
+
+    kafka_url: str = Field(alias="KAFKA_URL")
+    kafka_group_id: str = Field(alias="KAFKA_GROUP_ID", default="tg-bot")
+
+    new_message_received_event_topic: str = Field(
+        default="new-messages",
+        alias="NEW_MESSAGE_RECEIVED_EVENT_TOPIC",
+    )
+
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 
