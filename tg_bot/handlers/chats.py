@@ -1,10 +1,8 @@
-import re
 from typing import cast
 
 from aiogram import F, Router
 from aiogram.filters import Command, CommandObject, ExceptionTypeFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import ErrorEvent, Message
 from aiogram_i18n import I18nContext
 from containers.factories import get_container
@@ -13,10 +11,6 @@ from handlers.converters.chats import convert_chat_dtos_to_translated_message
 from services.web import BaseChatWebService
 
 chats_router = Router(name="Base")
-
-
-class MessageFormState(StatesGroup):
-    reply = State()
 
 
 @chats_router.message(Command("chats"))
@@ -60,45 +54,13 @@ async def add_chat_handler(message: Message, i18n: I18nContext, command: Command
         )
 
 
-@chats_router.message(Command("start_dialog"))
-async def start_dialog_handler(message: Message, i18n: I18nContext, command: CommandObject, state: FSMContext):
-    await message.answer(
-        i18n.get(
-            "start_dialog_success",
-        ),
-    )
-
-    await state.set_state(MessageFormState.reply)
-
-
-@chats_router.message(MessageFormState.reply)
+@chats_router.message(F.chat.is_forum, F.message_thread_id.is_not(None))
 async def send_message_to_chat_handler(
     message: Message,
-    state: FSMContext,
-    i18n: I18nContext,
+    # state: FSMContext,
+    # i18n: I18nContext,
 ):
-    if message.reply_to_message is None or message.reply_to_message.text is None:
-        await message.answer(
-            i18n.get(
-                "send_message_fail_not_reply",
-            ),
-        )
-        return
-    match_chat_oid = re.search(
-        r"🆔\s*<code>([0-9a-fA-F-]{36})</code>",
-        message.reply_to_message.html_text,
-    )
-    if not match_chat_oid:
-        await message.answer(
-            i18n.get(
-                "send_message_fail_oid_not_found",
-            ),
-        )
-        return
-
-    chat_oid = match_chat_oid.group(1).strip()
-    await message.answer(f"Message sent to {chat_oid}")
-    await state.set_state(MessageFormState.reply)
+    await message.answer(text=f"Message sent to {message.message_thread_id}")
 
 
 @chats_router.error(ExceptionTypeFilter(ListenerAddRequestException), F.update.message.as_("message"))

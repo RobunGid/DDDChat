@@ -35,6 +35,3 @@ add_chat_not_found_fail = Chat with this oid not found
 start_dialog_success = 
     You are connected to dialog now. 
     Reply to specific messages so the user can see replies
-
-send_message_fail_not_reply = Select a message and reply to send it in chat
-send_message_fail_oid_not_found = Chat oid not found in this message

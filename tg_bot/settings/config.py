@@ -15,7 +15,14 @@ class Config(BaseSettings):
         default="new-messages",
         alias="NEW_MESSAGE_RECEIVED_EVENT_TOPIC",
     )
-
+    new_chats_event_topic: str = Field(
+        default="new-chats-topic",
+        alias="NEW_CHATS_EVENT_TOPIC",
+    )
+    telegram_support_group_id: str = Field(
+        alias="TELEGRAM_SUPPORT_GROUP_ID",
+    )
+    # TODO: standartize all topics, aliases
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 

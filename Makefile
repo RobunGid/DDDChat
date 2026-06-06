@@ -69,7 +69,7 @@ tg-bot:
 
 .PHONY: tg-bot-down
 tg-bot-down:
-	${DC} -f ${TG_BOT_CONTAINER} down	
+	${DC} -f ${TG_BOT_FILE} down	
 
 .PHONY: tg-bot-logs
 tg-bot-logs:
