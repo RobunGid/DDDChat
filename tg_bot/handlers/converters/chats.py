@@ -1,9 +1,9 @@
 from aiogram_i18n import I18nContext
-from dtos.messages import ChatListItemDTO
+from dtos.messages import ChatDTO
 
 
 def convert_chat_dtos_to_translated_message(
-    chats: list[ChatListItemDTO],
+    chats: list[ChatDTO],
     i18n: I18nContext,
 ) -> str:
     return "\n\n".join(

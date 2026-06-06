@@ -31,12 +31,14 @@ from domain.entities.messages import (
     Message,
 )
 from domain.exceptions.base import ApplicationException
+from domain.exceptions.chats import ListenerAlreadyExistsException
 from logic.commands.messages import (
     AddTelegramSupportListenerCommand,
     CreateChatCommand,
     CreateMessageCommand,
     DeleteChatCommand,
 )
+from logic.exceptions.messages import ChatNotFoundException
 from logic.init import init_container
 from logic.mediator.base import Mediator
 from logic.queries.messages import (
@@ -230,14 +232,14 @@ async def delete_chat_handler(
 
 
 @router.post(
-    "/{chat_oid}/",
+    "/{chat_oid}/listeners",
     status_code=status.HTTP_201_CREATED,
+    response_model=ResponseAddTelegramListenerSchema,
     description="Add telegram support listener to chat",
     responses={
         status.HTTP_400_BAD_REQUEST: {"model": ErrorSchema},
         status.HTTP_201_CREATED: {"model": ResponseAddTelegramListenerSchema},
     },
-    response_model=ResponseAddTelegramListenerSchema,
     operation_id="addTelegramListenerToChat",
 )
 async def add_telegram_support_listener_handler(
@@ -250,6 +252,16 @@ async def add_telegram_support_listener_handler(
     try:
         chat_listener, *_ = await mediator.handle_command(
             AddTelegramSupportListenerCommand(chat_oid=chat_oid, telegram_chat_id=schema.telegram_chat_id),
+        )
+    except ListenerAlreadyExistsException as exception:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={"error": exception.message},
+        )
+    except ChatNotFoundException as exception:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"error": exception.message},
         )
     except ApplicationException as exception:
         raise HTTPException(
