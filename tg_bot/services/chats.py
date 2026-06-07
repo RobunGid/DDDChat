@@ -1,21 +1,27 @@
-from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
-from motor.core import AgnosticClient
+from dtos.messages import ChatDataDTO
+from exceptions.chats import ChatAlreadyExistsException
+from repositories.chats.base import BaseChatsRepository
 
 
-@dataclass
-class BaseChatService(ABC):
-    @abstractmethod
-    async def set_current_chat(self, chat_oid: str, telegram_chat_id: str): ...
+@dataclass(eq=False)
+class ChatsService:
+    repository: BaseChatsRepository
 
+    async def add_chat(self, telegram_chat_id: str, web_chat_id: str) -> ChatDataDTO:
+        if await self.repository.check_is_chat_exists(
+            web_chat_id=web_chat_id,
+            telegram_chat_id=telegram_chat_id,
+        ):
+            raise ChatAlreadyExistsException(
+                telegram_chat_id=telegram_chat_id,
+                web_chat_id=web_chat_id,
+            )
 
-@dataclass
-class BaseMongoDBService(ABC):
-    mongo_db_client: AgnosticClient
-    mongo_db_db_name: str
-    mongo_db_collection_name: str
-
-    @property
-    def _collection(self):
-        return self.mongo_db_client[self.mongo_db_db_name][self.mongo_db_collection_name]
+        return await self.repository.add_chat(
+            chat_info=ChatDataDTO(
+                web_chat_id=web_chat_id,
+                telegram_chat_id=telegram_chat_id,
+            ),
+        )

@@ -1,43 +1,66 @@
+import json
 from dataclasses import dataclass
 
 from exceptions.base import ApplicationException
 
 
 @dataclass(eq=False)
-class ChatListRequestException(ApplicationException):
+class BaseWebException(ApplicationException):
     status_code: int
     response_content: str
 
     @property
-    def message(self):
-        return "Could not get chats"
+    def response_json(self) -> dict:
+        return json.loads(self.response_content)
+
+    @property
+    def error_text(self) -> str:
+        return self.response_json.get("detail", {}).get("error", "")
 
 
 @dataclass(eq=False)
-class ChatListenerListRequestException(ApplicationException):
-    status_code: int
-    response_content: str
-
+class ChatListRequestException(BaseWebException):
     @property
     def message(self):
-        return "Could not get chat listeners"
+        return "Failed to retrieve list of chats"
 
 
 @dataclass(eq=False)
-class ListenerAddRequestException(ApplicationException):
-    status_code: int
-    response_content: str
-
+class ChatListenerListRequestException(BaseWebException):
     @property
     def message(self):
-        return "Could not add chat listener"
+        return "Failed to retrieve list of chat listeners"
 
 
 @dataclass(eq=False)
-class ChatRequestException(ApplicationException):
-    status_code: int
-    response_content: str
+class ChatListenerAddRequestException(BaseWebException):
+    @property
+    def message(self):
+        return "Failed to add listener to chat"
+
+
+@dataclass(eq=False)
+class ChatAlreadyExistsException(ApplicationException):
+    telegram_chat_id: str | None = None
+    web_chat_id: str | None = None
 
     @property
     def message(self):
-        return "Could not get this chat"
+        return "Chat with such data already exists"
+
+
+@dataclass(eq=False)
+class ChatDataNotFoundException(ApplicationException):
+    telegram_chat_id: str | None = None
+    web_chat_id: str | None = None
+
+    @property
+    def message(self):
+        return "Unable to find created chat"
+
+
+@dataclass(eq=False)
+class ChatDataRequestException(BaseWebException):
+    @property
+    def message(self):
+        return "Failed to retrieve chat information"

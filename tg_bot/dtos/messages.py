@@ -14,3 +14,8 @@ class ChatDTO(BaseModel):
 
 class ChatListenerDTO(BaseModel):
     oid: str
+
+
+class ChatDataDTO(BaseModel):
+    telegram_chat_id: str
+    web_chat_id: str

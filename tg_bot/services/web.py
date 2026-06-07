@@ -4,10 +4,10 @@ from urllib.parse import urljoin
 
 from dtos.messages import ChatDTO, ChatListenerDTO
 from exceptions.chats import (
+    ChatDataRequestException,
+    ChatListenerAddRequestException,
     ChatListenerListRequestException,
     ChatListRequestException,
-    ChatRequestException,
-    ListenerAddRequestException,
 )
 from httpx import AsyncClient
 from services.constants import CHAT_LIST_URI, CHAT_LISTENERS_URI, CHAT_URI, DEFAULT_LIMIT, DEFAULT_OFFSET
@@ -68,7 +68,7 @@ class ChatWebService(BaseChatWebService):
             json={"telegram_chat_id": telegram_chat_id},
         )
         if not response.is_success:
-            raise ListenerAddRequestException(
+            raise ChatListenerAddRequestException(
                 response_content=response.content.decode(),
                 status_code=response.status_code,
             )
@@ -78,7 +78,7 @@ class ChatWebService(BaseChatWebService):
             url=urljoin(base=self.base_url, url=CHAT_URI.format(chat_oid=chat_oid)),
         )
         if not response.is_success:
-            raise ChatRequestException(
+            raise ChatDataRequestException(
                 status_code=response.status_code,
                 response_content=response.content.decode(),
             )

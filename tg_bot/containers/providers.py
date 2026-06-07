@@ -1,6 +1,8 @@
 from aiogram import Bot
-from dishka import provide, Provider, Scope
+from dishka import AnyOf, provide, Provider, Scope
 from httpx import AsyncClient
+from repositories.chats.base import BaseChatsRepository, SQLChatsRepository
+from services.chats import ChatsService
 from services.web import BaseChatWebService, ChatWebService
 
 from settings.config import Config
@@ -22,3 +24,11 @@ class DefaultProvider(Provider):
     @provide(scope=Scope.REQUEST)
     def get_telegram_bot(self) -> Bot:
         return Bot(token=self.get_config().tg_bot_token)
+
+    @provide(scope=Scope.REQUEST)
+    def get_chats_repository(self, config: Config) -> AnyOf[BaseChatsRepository, SQLChatsRepository]:
+        return SQLChatsRepository(database_url=config.DATABASE_NAME)
+
+    @provide(scope=Scope.REQUEST)
+    def get_chats_service(self, repository: BaseChatsRepository) -> ChatsService:
+        return ChatsService(repository=repository)
