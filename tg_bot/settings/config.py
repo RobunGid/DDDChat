@@ -22,6 +22,7 @@ class Config(BaseSettings):
     telegram_support_group_id: str = Field(
         alias="TELEGRAM_SUPPORT_GROUP_ID",
     )
+    database_name: str = Field(alias="DATABASE_NAME")
     # TODO: standartize all topics, aliases
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

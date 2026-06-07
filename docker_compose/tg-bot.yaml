@@ -12,6 +12,7 @@ services:
       KAFKA_URL: ${KAFKA_URL:?} 
       MONGO_DB_CONNECTION_URI: ${MONGO_DB_CONNECTION_URI:?}
       TELEGRAM_SUPPORT_GROUP_ID: ${MONGO_DB_CONNECTION_URI:?}
+      DATABASE_NAME: ${DATABASE_NAME:?}
     networks:
       - backend
     volumes:
