@@ -4,13 +4,22 @@ from urllib.parse import urljoin
 
 from dtos.chats import ChatDTO, ChatListenerDTO
 from exceptions.chats import (
-    ChatDataRequestException,
-    ChatListenerAddRequestException,
-    ChatListenerListRequestException,
-    ChatListRequestException,
+    ChatDataWebException,
+    ChatListenerAddWebException,
+    ChatListenerListWebException,
+    ChatListWebException,
+    ChatMessageCreateTimeoutRequestException,
+    ChatMessageCreateWebException,
 )
-from httpx import AsyncClient
-from services.constants import CHAT_LIST_URI, CHAT_LISTENERS_URI, CHAT_URI, DEFAULT_LIMIT, DEFAULT_OFFSET
+from httpx import AsyncClient, ConnectTimeout, HTTPStatusError
+from services.constants import (
+    CHAT_LIST_URI,
+    CHAT_LISTENERS_URI,
+    CHAT_MESSAGES_URI,
+    CHAT_URI,
+    DEFAULT_LIMIT,
+    DEFAULT_OFFSET,
+)
 from services.converters.chats import convert_chat_listener_response_to_dto, convert_chat_response_to_dto
 
 
@@ -35,6 +44,10 @@ class BaseChatWebService(ABC):
     async def get_chat_data(self, chat_oid: str) -> ChatDTO:
         pass
 
+    @abstractmethod
+    async def create_message_in_chat(self, chat_oid: str, message_text: str):
+        pass
+
 
 @dataclass
 class ChatWebService(BaseChatWebService):
@@ -44,7 +57,7 @@ class ChatWebService(BaseChatWebService):
             params={"limit": DEFAULT_LIMIT, "offset": DEFAULT_OFFSET},
         )
         if not response.is_success:
-            raise ChatListRequestException(status_code=response.status_code, response_content=response.content.decode())
+            raise ChatListWebException(status_code=response.status_code, response_content=response.content.decode())
         json_data = response.json()
         return [convert_chat_response_to_dto(chat_data=chat_data) for chat_data in json_data["items"]]
 
@@ -53,7 +66,7 @@ class ChatWebService(BaseChatWebService):
             url=urljoin(base=self.base_url, url=CHAT_LISTENERS_URI.format(chat_oid=chat_oid)),
         )
         if not response.is_success:
-            raise ChatListenerListRequestException(
+            raise ChatListenerListWebException(
                 status_code=response.status_code,
                 response_content=response.content.decode(),
             )
@@ -68,7 +81,7 @@ class ChatWebService(BaseChatWebService):
             json={"telegram_chat_id": telegram_chat_id},
         )
         if not response.is_success:
-            raise ChatListenerAddRequestException(
+            raise ChatListenerAddWebException(
                 response_content=response.content.decode(),
                 status_code=response.status_code,
             )
@@ -78,9 +91,24 @@ class ChatWebService(BaseChatWebService):
             url=urljoin(base=self.base_url, url=CHAT_URI.format(chat_oid=chat_oid)),
         )
         if not response.is_success:
-            raise ChatDataRequestException(
+            raise ChatDataWebException(
                 status_code=response.status_code,
                 response_content=response.content.decode(),
             )
         json_data = response.json()
         return convert_chat_response_to_dto(chat_data=json_data)
+
+    async def create_message_in_chat(self, chat_oid: str, message_text: str):
+        try:
+            response = await self.http_client.post(
+                url=urljoin(base=self.base_url, url=CHAT_MESSAGES_URI.format(chat_oid=chat_oid)),
+                json={"text": message_text},
+            )
+            response.raise_for_status()
+        except HTTPStatusError as error:
+            raise ChatMessageCreateWebException(
+                response_content=error.response.content.decode(),
+                status_code=error.response.status_code,
+            )
+        except ConnectTimeout:
+            raise ChatMessageCreateTimeoutRequestException()

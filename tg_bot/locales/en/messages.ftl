@@ -21,3 +21,5 @@ chat_list_item =
          Created at: { $created_at }
 		
 chats_not_found = No chats were found
+message_create_fail_timeout = Fail to send message because of timeout
+message_create_fail_response = Fail to send message

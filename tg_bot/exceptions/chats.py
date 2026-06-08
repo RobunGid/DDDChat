@@ -19,21 +19,21 @@ class BaseWebException(ApplicationException):
 
 
 @dataclass(eq=False)
-class ChatListRequestException(BaseWebException):
+class ChatListWebException(BaseWebException):
     @property
     def message(self):
         return "Failed to retrieve list of chats"
 
 
 @dataclass(eq=False)
-class ChatListenerListRequestException(BaseWebException):
+class ChatListenerListWebException(BaseWebException):
     @property
     def message(self):
         return "Failed to retrieve list of chat listeners"
 
 
 @dataclass(eq=False)
-class ChatListenerAddRequestException(BaseWebException):
+class ChatListenerAddWebException(BaseWebException):
     @property
     def message(self):
         return "Failed to add listener to chat"
@@ -60,7 +60,21 @@ class ChatDataNotFoundException(ApplicationException):
 
 
 @dataclass(eq=False)
-class ChatDataRequestException(BaseWebException):
+class ChatDataWebException(BaseWebException):
     @property
     def message(self):
         return "Failed to retrieve chat information"
+
+
+@dataclass(eq=False)
+class ChatMessageCreateWebException(BaseWebException):
+    @property
+    def message(self):
+        return "Failed to create message in chat"
+
+
+@dataclass(eq=False)
+class ChatMessageCreateTimeoutRequestException(ApplicationException):
+    @property
+    def message(self):
+        return "Failed to created message in chat because of timeout"

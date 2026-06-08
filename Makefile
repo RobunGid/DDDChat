@@ -20,15 +20,15 @@ all:
 
 .PHONY: all-down
 all-down:
-	${DC} -f ${APP_FILE} -f ${STORAGES_FILE} -f ${MESSAGING_FILE} -f ${TG_BOT_FILE} -f ${TG_BOT_CONSUMER_FILE} ${ENV} down
+	${DC} -f ${APP_FILE} -f ${STORAGES_FILE} -f ${MESSAGING_FILE} -f ${TG_BOT_FILE} ${ENV} down
 
 .PHONY: app
 app:
-	${DC} -f ${APP_FILE} ${ENV} up --build -
+	${DC} -f ${APP_FILE} ${ENV} up --build -d
 
 .PHONY: app-down
 app-down:
-	${DC} -f ${APP_FILE} down	
+	${DC} -f ${APP_FILE} ${ENV} down	
 
 .PHONY: app-shell
 app-shell:

@@ -11,12 +11,12 @@ INSERT INTO chat_web_mapping (web_chat_id, telegram_chat_id) VALUES (
 );
 """
 GET_CHAT_DATA_BY_TELEGRAM_ID_SQL_QUERY = """
-SELECT (web_chat_id, telegram_chat_id) FROM chat_web_mapping WHERE
-telegram_id = ?
+SELECT web_chat_id, telegram_chat_id FROM chat_web_mapping WHERE
+telegram_chat_id = ?
 LIMIT 1
 """
 GET_CHAT_DATA_BY_WEB_ID_SQL_QUERY = """
-SELECT (web_chat_id, telegram_chat_id) FROM chat_web_mapping WHERE
+SELECT web_chat_id, telegram_chat_id FROM chat_web_mapping WHERE
 web_chat_id = ?
 LIMIT 1
 """

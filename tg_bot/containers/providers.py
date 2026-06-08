@@ -2,7 +2,7 @@ from aiogram import Bot
 from dishka import AnyOf, provide, Provider, Scope
 from httpx import AsyncClient
 from repositories.chats.base import BaseChatsRepository, SQLChatsRepository
-from services.chats import ChatsService
+from services.chats import ChatsStorageService
 from services.web import BaseChatWebService, ChatWebService
 
 from settings.config import Config
@@ -34,5 +34,5 @@ class DefaultProvider(Provider):
         return SQLChatsRepository(database_url=config.database_name)
 
     @provide(scope=Scope.REQUEST)
-    def get_chats_service(self, repository: BaseChatsRepository) -> ChatsService:
-        return ChatsService(repository=repository)
+    def get_chats_service(self, repository: BaseChatsRepository) -> ChatsStorageService:
+        return ChatsStorageService(repository=repository)

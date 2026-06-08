@@ -8,7 +8,7 @@ services:
       context: ..
       dockerfile: tg_bot/Dockerfile
     container_name: telegram-bot
-    command: "debugpy --listen 5678 -m main"
+    command: "debugpy --listen 0.0.0.0:5678 -m main"
     restart: always
     environment:
       TG_BOT_TOKEN: ${TG_BOT_TOKEN:?}

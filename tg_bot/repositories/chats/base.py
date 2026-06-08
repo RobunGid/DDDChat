@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from typing import overload
 
 from aiosqlite import connect
 from dtos.chats import ChatDataDTO
@@ -21,11 +22,31 @@ class BaseChatsRepository(ABC):
     async def get_by_web_id(self, web_chat_id: str) -> ChatDataDTO:
         pass
 
+    @overload
     @abstractmethod
     async def check_is_chat_exists(
         self,
-        web_chat_id: str | None,
-        telegram_chat_id: str | None,
+        *,
+        telegram_chat_id: str,
+    ) -> bool:
+        pass
+
+    @overload
+    @abstractmethod
+    async def check_is_chat_exists(
+        self,
+        *,
+        web_chat_id: str,
+    ) -> bool:
+        pass
+
+    @overload
+    @abstractmethod
+    async def check_is_chat_exists(
+        self,
+        *,
+        web_chat_id: str,
+        telegram_chat_id: str,
     ) -> bool:
         pass
 
@@ -60,8 +81,8 @@ class SQLChatsRepository(BaseChatsRepository):
             raise ChatDataNotFoundException(telegram_chat_id=telegram_chat_id)
 
         return ChatDataDTO(
-            telegram_chat_id=result[0],
-            web_chat_id=result[1],
+            web_chat_id=result[0],
+            telegram_chat_id=str(result[1]),
         )
 
     async def get_by_web_id(self, web_chat_id: str) -> ChatDataDTO:
@@ -79,8 +100,8 @@ class SQLChatsRepository(BaseChatsRepository):
 
     async def check_is_chat_exists(
         self,
-        web_chat_id: str | None,
-        telegram_chat_id: str | None,
+        web_chat_id: str | None = None,
+        telegram_chat_id: str | None = None,
     ) -> bool:
         async with connect(self.database_url) as connection:
             cursor = await connection.execute(GET_CHATS_COUNT_SQL_QUERY, (web_chat_id, telegram_chat_id))

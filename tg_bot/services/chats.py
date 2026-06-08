@@ -1,12 +1,12 @@
 from dataclasses import dataclass
 
 from dtos.chats import ChatDataDTO
-from exceptions.chats import ChatAlreadyExistsException
+from exceptions.chats import ChatAlreadyExistsException, ChatDataNotFoundException
 from repositories.chats.base import BaseChatsRepository
 
 
 @dataclass(eq=False)
-class ChatsService:
+class ChatsStorageService:
     repository: BaseChatsRepository
 
     async def add_chat(self, telegram_chat_id: str, web_chat_id: str) -> ChatDataDTO:
@@ -25,3 +25,12 @@ class ChatsService:
                 telegram_chat_id=telegram_chat_id,
             ),
         )
+
+    # TODO: Change all telegram_chat_id to telegram_thread_id
+    async def get_chat_data_by_telegram_id(self, telegram_chat_id: str) -> ChatDataDTO:
+        if not await self.repository.check_is_chat_exists(
+            telegram_chat_id=telegram_chat_id,
+        ):
+            raise ChatDataNotFoundException(telegram_chat_id=telegram_chat_id)
+
+        return await self.repository.get_by_telegram_id(telegram_chat_id=telegram_chat_id)
