@@ -5,17 +5,17 @@ CREATE TABLE IF NOT EXISTS chat_web_mapping (
     PRIMARY KEY (web_chat_id, telegram_chat_id)
 );
 """
-ADD_NEW_CHAT_INFO = """
+ADD_NEW_CHAT_DATA = """
 INSERT INTO chat_web_mapping (web_chat_id, telegram_chat_id) VALUES (
     ?, ?
 );
 """
-GET_CHAT_INFO_BY_TELEGRAM_ID = """
+GET_CHAT_DATA_BY_TELEGRAM_ID = """
 SELECT (web_chat_id, telegram_chat_id) FROM chat_web_mapping WHERE
 telegram_id = ?
 LIMIT 1
 """
-GET_CHAT_INFO_BY_WEB_ID = """
+GET_CHAT_DATA_BY_WEB_ID = """
 SELECT (web_chat_id, telegram_chat_id) FROM chat_web_mapping WHERE
 web_chat_id = ?
 LIMIT 1

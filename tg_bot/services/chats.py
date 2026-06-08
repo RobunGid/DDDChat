@@ -20,7 +20,7 @@ class ChatsService:
             )
 
         return await self.repository.add_chat(
-            chat_info=ChatDataDTO(
+            chat_data=ChatDataDTO(
                 web_chat_id=web_chat_id,
                 telegram_chat_id=telegram_chat_id,
             ),

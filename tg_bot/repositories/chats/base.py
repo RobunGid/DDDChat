@@ -5,9 +5,9 @@ from aiosqlite import connect
 from dtos.messages import ChatDataDTO
 from exceptions.chats import ChatDataNotFoundException
 from repositories.sql import (
-    ADD_NEW_CHAT_INFO,
-    GET_CHAT_INFO_BY_TELEGRAM_ID,
-    GET_CHAT_INFO_BY_WEB_ID,
+    ADD_NEW_CHAT_DATA,
+    GET_CHAT_DATA_BY_TELEGRAM_ID,
+    GET_CHAT_DATA_BY_WEB_ID,
     GET_CHATS_COUNT,
 )
 
@@ -30,7 +30,7 @@ class BaseChatsRepository(ABC):
         pass
 
     @abstractmethod
-    async def add_chat(self, chat_info: ChatDataDTO) -> ChatDataDTO:
+    async def add_chat(self, chat_data: ChatDataDTO) -> ChatDataDTO:
         pass
 
 
@@ -38,19 +38,19 @@ class BaseChatsRepository(ABC):
 class SQLChatsRepository(BaseChatsRepository):
     database_url: str
 
-    async def add_chat(self, chat_info: ChatDataDTO) -> ChatDataDTO:
+    async def add_chat(self, chat_data: ChatDataDTO) -> ChatDataDTO:
         async with connect(self.database_url) as connection:
-            await connection.execute_insert(ADD_NEW_CHAT_INFO, (chat_info.web_chat_id, chat_info.telegram_chat_id))
+            await connection.execute_insert(ADD_NEW_CHAT_DATA, (chat_data.web_chat_id, chat_data.telegram_chat_id))
             await connection.commit()
 
         return ChatDataDTO(
-            web_chat_id=chat_info.web_chat_id,
-            telegram_chat_id=chat_info.telegram_chat_id,
+            web_chat_id=chat_data.web_chat_id,
+            telegram_chat_id=chat_data.telegram_chat_id,
         )
 
     async def get_by_telegram_id(self, telegram_chat_id: str) -> ChatDataDTO:
         async with connect(self.database_url) as connection:
-            result = await connection.execute_insert(GET_CHAT_INFO_BY_TELEGRAM_ID, (telegram_chat_id,))
+            result = await connection.execute_insert(GET_CHAT_DATA_BY_TELEGRAM_ID, (telegram_chat_id,))
 
         if result is None:
             raise ChatDataNotFoundException(telegram_chat_id=telegram_chat_id)
@@ -62,7 +62,7 @@ class SQLChatsRepository(BaseChatsRepository):
 
     async def get_by_external_id(self, web_chat_id: str) -> ChatDataDTO:
         async with connect(self.database_url) as connection:
-            result = await connection.execute_insert(GET_CHAT_INFO_BY_WEB_ID, (web_chat_id,))
+            result = await connection.execute_insert(GET_CHAT_DATA_BY_WEB_ID, (web_chat_id,))
 
         if result is None:
             raise ChatDataNotFoundException(web_chat_id=web_chat_id)
