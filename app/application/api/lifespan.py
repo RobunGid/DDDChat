@@ -24,7 +24,7 @@ async def consumer_in_background():
     cqrs_bus = container.resolve(ApplicationBus)
 
     async for msg in message_broker.start_consuming(
-        config.new_message_received_event_topic,
+        config.message_create_event_topic,
     ):
         await cqrs_bus.publish(
             [

@@ -11,14 +11,14 @@ class Config(BaseSettings):
     kafka_url: str = Field(alias="KAFKA_URL")
     kafka_group_id: str = Field(alias="KAFKA_GROUP_ID")
 
-    new_message_received_event_topic: str = Field(
-        alias="NEW_MESSAGE_RECEIVED_EVENT_TOPIC",
+    chat_create_event_topic: str = Field(
+        alias="CHAT_CREATE_EVENT_TOPIC",
     )
-    new_chats_event_topic: str = Field(
-        alias="NEW_CHATS_EVENT_TOPIC",
+    chat_delete_event_topic: str = Field(
+        alias="CHAT_DELETE_EVENT_TOPIC",
     )
-    chats_deleted_event_topic: str = Field(
-        alias="CHATS_DELETED_EVENT_TOPIC",
+    message_create_event_topic: str = Field(
+        alias="MESSAGE_CREATE_EVENT_TOPIC",
     )
     telegram_support_group_id: str = Field(
         alias="TELEGRAM_SUPPORT_GROUP_ID",

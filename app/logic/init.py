@@ -150,34 +150,34 @@ def _init_container() -> Container:
             chats_repository=container.resolve(BaseChatsRepository),
         )
         # Event handlers
-        new_chat_created_event_handler = NewChatCreatedEventHandler(
-            broker_topic=config.new_chats_event_topic,
+        chat_create_event_handler = NewChatCreatedEventHandler(
+            broker_topic=config.chat_create_event_topic,
             message_broker=container.resolve(BaseMessageBroker),
             connection_manager=container.resolve(BaseConnectionManager),
         )
-        new_message_received_event_handler = NewMessageReceivedEventHandler(
-            broker_topic=config.new_message_received_event_topic,
+        message_create_event_handler = NewMessageReceivedEventHandler(
+            broker_topic=config.message_create_event_topic,
             message_broker=container.resolve(BaseMessageBroker),
             connection_manager=container.resolve(BaseConnectionManager),
         )
         new_message_received_from_broker_event_handler = NewMessageReceivedFromBrokerEventHandler(
             message_broker=container.resolve(BaseMessageBroker),
-            broker_topic=config.new_message_received_event_topic,
+            broker_topic=config.message_create_event_topic,
             connection_manager=container.resolve(BaseConnectionManager),
         )
-        chat_deleted_event_handler = ChatDeletedEventHandler(
-            broker_topic=config.chats_deleted_event_topic,
+        chat_delete_event_handler = ChatDeletedEventHandler(
+            broker_topic=config.chat_delete_event_topic,
             message_broker=container.resolve(BaseMessageBroker),
             connection_manager=container.resolve(BaseConnectionManager),
         )
         # Events
         application_bus.register_event(
             NewChatCreatedEvent,
-            [new_chat_created_event_handler],
+            [chat_create_event_handler],
         )
         application_bus.register_event(
             NewMessageReceivedEvent,
-            [new_message_received_event_handler],
+            [message_create_event_handler],
         )
         application_bus.register_event(
             NewMessageReceivedFromBrokerEvent,
@@ -185,7 +185,7 @@ def _init_container() -> Container:
         )
         application_bus.register_event(
             ChatDeletedEvent,
-            [chat_deleted_event_handler],
+            [chat_delete_event_handler],
         )
         # Commands
         application_bus.register_command(

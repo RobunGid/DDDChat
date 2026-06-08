@@ -17,10 +17,10 @@ services:
       MONGO_DB_CONNECTION_URI: ${MONGO_DB_CONNECTION_URI:?}
       TELEGRAM_SUPPORT_GROUP_ID: ${MONGO_DB_CONNECTION_URI:?}
       DATABASE_NAME: ${DATABASE_NAME:?}
-      CHATS_DELETED_EVENT_TOPIC: ${CHATS_DELETED_EVENT_TOPIC:?}
       KAFKA_GROUP_ID: ${KAFKA_GROUP_ID:?}
-      NEW_MESSAGE_RECEIVED_EVENT_TOPIC: ${NEW_MESSAGE_RECEIVED_EVENT_TOPIC:?}
-      NEW_CHATS_EVENT_TOPIC: ${NEW_CHATS_EVENT_TOPIC:?}
+      CHAT_CREATE_EVENT_TOPIC: ${CHAT_CREATE_EVENT_TOPIC:?}
+      CHAT_DELETE_EVENT_TOPIC: ${CHAT_DELETE_EVENT_TOPIC:?}
+      MESSAGE_CREATE_EVENT_TOPIC: ${MESSAGE_CREATE_EVENT_TOPIC:?}
     networks:
       - backend
     volumes:
@@ -38,13 +38,13 @@ services:
       TG_BOT_TOKEN: ${TG_BOT_TOKEN:?}
       WEB_API_BASE_URL: ${WEB_API_BASE_URL:?}
       KAFKA_URL: ${KAFKA_URL:?} 
-      CHATS_DELETED_EVENT_TOPIC: ${CHATS_DELETED_EVENT_TOPIC:?}
       MONGO_DB_CONNECTION_URI: ${MONGO_DB_CONNECTION_URI:?}
       TELEGRAM_SUPPORT_GROUP_ID: ${TELEGRAM_SUPPORT_GROUP_ID:?}
       DATABASE_NAME: ${DATABASE_NAME:?}
       KAFKA_GROUP_ID: ${KAFKA_GROUP_ID:?}
-      NEW_MESSAGE_RECEIVED_EVENT_TOPIC: ${NEW_MESSAGE_RECEIVED_EVENT_TOPIC:?}
-      NEW_CHATS_EVENT_TOPIC: ${NEW_CHATS_EVENT_TOPIC:?}
+      CHAT_CREATE_EVENT_TOPIC: ${CHAT_CREATE_EVENT_TOPIC:?}
+      CHAT_DELETE_EVENT_TOPIC: ${CHAT_DELETE_EVENT_TOPIC:?}
+      MESSAGE_CREATE_EVENT_TOPIC: ${MESSAGE_CREATE_EVENT_TOPIC:?}
     networks:
       - backend
     volumes:
@@ -56,7 +56,7 @@ services:
         condition: service_healthy
     ports:
       - 5677:5678
-    command: "debugpy --listen 0.0.0.0:5678 -m faststream run --factory consumers.main:get_app --reload --app-dir ."
+    command: "debugpy --listen 0.0.0.0:5678 -m faststream run --factory consumers.main:get_consumer_app --reload --app-dir ."
 
   sqliteweb:
     image: tomdesinto/sqliteweb

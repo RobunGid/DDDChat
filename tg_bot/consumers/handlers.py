@@ -11,7 +11,7 @@ config = get_config()
 router = KafkaRouter()
 
 
-@router.subscriber(config.new_message_received_event_topic, group_id=config.kafka_group_id)
+@router.subscriber(config.message_create_event_topic, group_id=config.kafka_group_id)
 async def new_message_subscription_handler(
     message: NewChatMessageSchema,
 ):
@@ -28,7 +28,7 @@ async def new_message_subscription_handler(
         )
 
 
-@router.subscriber(config.chats_deleted_event_topic, group_id=config.kafka_group_id)
+@router.subscriber(config.chat_delete_event_topic, group_id=config.kafka_group_id)
 async def chat_deleted_subscription_handler(data: DeleteChatSchema):
     container = get_container()
 
@@ -45,7 +45,7 @@ async def chat_deleted_subscription_handler(data: DeleteChatSchema):
         )
 
 
-@router.subscriber(config.new_chats_event_topic, group_id=config.kafka_group_id)
+@router.subscriber(config.chat_create_event_topic, group_id=config.kafka_group_id)
 async def new_chat_subscription_handler(data: NewChatSchema):
     container = get_container()
 
