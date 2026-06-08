@@ -39,8 +39,8 @@ async def send_message_to_chat_handler(
     async with container() as request_container:
         web_service = await request_container.get(BaseChatWebService)
         storage_service = await request_container.get(ChatsStorageService)
-        chat_mapping_data = await storage_service.get_chat_mapping_data_by_telegram_id(
-            telegram_chat_id=str(message.message_thread_id),
+        chat_mapping_data = await storage_service.get_chat_mapping_data_by_telegram_thread_id(
+            telegram_thread_id=str(message.message_thread_id),
         )
 
         await web_service.create_message_in_chat(chat_oid=chat_mapping_data.web_chat_id, message_text=message.html_text)

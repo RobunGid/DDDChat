@@ -27,7 +27,7 @@ class ChatListWebException(BaseWebException):
 
 @dataclass(eq=False)
 class ChatMappingDataAlreadyExistsException(ApplicationException):
-    telegram_chat_id: str | None = None
+    telegram_thread_id: str | None = None
     web_chat_id: str | None = None
 
     @property
@@ -37,7 +37,7 @@ class ChatMappingDataAlreadyExistsException(ApplicationException):
 
 @dataclass(eq=False)
 class ChatMappingDataNotFoundException(ApplicationException):
-    telegram_chat_id: str | None = None
+    telegram_thread_id: str | None = None
     web_chat_id: str | None = None
 
     @property

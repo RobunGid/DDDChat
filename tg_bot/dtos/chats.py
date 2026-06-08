@@ -13,5 +13,5 @@ class ChatDTO(BaseModel):
 
 
 class ChatMappingDataDTO(BaseModel):
-    telegram_chat_id: str
+    telegram_thread_id: str
     web_chat_id: str
