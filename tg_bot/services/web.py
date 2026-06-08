@@ -4,10 +4,10 @@ from urllib.parse import urljoin
 
 from dtos.chats import ChatDTO
 from exceptions.chats import (
-    ChatDataWebException,
     ChatListWebException,
-    ChatMessageCreateTimeoutRequestException,
+    ChatMessageCreateTimeoutWebException,
     ChatMessageCreateWebException,
+    ChatWebException,
 )
 from httpx import AsyncClient, ConnectTimeout, HTTPStatusError
 from services.constants import (
@@ -30,7 +30,7 @@ class BaseChatWebService(ABC):
         pass
 
     @abstractmethod
-    async def get_chat_data(self, chat_oid: str) -> ChatDTO:
+    async def get_chat(self, chat_oid: str) -> ChatDTO:
         pass
 
     @abstractmethod
@@ -50,12 +50,12 @@ class ChatWebService(BaseChatWebService):
         json_data = response.json()
         return [convert_chat_response_to_dto(chat_data=chat_data) for chat_data in json_data["items"]]
 
-    async def get_chat_data(self, chat_oid: str) -> ChatDTO:
+    async def get_chat(self, chat_oid: str) -> ChatDTO:
         response = await self.http_client.get(
             url=urljoin(base=self.base_url, url=CHAT_URI.format(chat_oid=chat_oid)),
         )
         if not response.is_success:
-            raise ChatDataWebException(
+            raise ChatWebException(
                 status_code=response.status_code,
                 response_content=response.content.decode(),
             )
@@ -75,4 +75,4 @@ class ChatWebService(BaseChatWebService):
                 status_code=error.response.status_code,
             )
         except ConnectTimeout:
-            raise ChatMessageCreateTimeoutRequestException()
+            raise ChatMessageCreateTimeoutWebException()

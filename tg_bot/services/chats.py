@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
-from dtos.chats import ChatDataDTO
-from exceptions.chats import ChatAlreadyExistsException, ChatNotFoundException
+from dtos.chats import ChatMappingDataDTO
+from exceptions.chats import ChatMappingDataAlreadyExistsException, ChatMappingDataNotFoundException
 from repositories.chats.base import BaseChatsRepository
 
 
@@ -9,18 +9,18 @@ from repositories.chats.base import BaseChatsRepository
 class ChatsStorageService:
     repository: BaseChatsRepository
 
-    async def add_chat(self, telegram_chat_id: str, web_chat_id: str) -> ChatDataDTO:
+    async def add_chat(self, telegram_chat_id: str, web_chat_id: str) -> ChatMappingDataDTO:
         if await self.repository.check_is_chat_exists(
             web_chat_id=web_chat_id,
             telegram_chat_id=telegram_chat_id,
         ):
-            raise ChatAlreadyExistsException(
+            raise ChatMappingDataAlreadyExistsException(
                 telegram_chat_id=telegram_chat_id,
                 web_chat_id=web_chat_id,
             )
 
         return await self.repository.add_chat(
-            chat_data=ChatDataDTO(
+            chat_data=ChatMappingDataDTO(
                 web_chat_id=web_chat_id,
                 telegram_chat_id=telegram_chat_id,
             ),
@@ -30,7 +30,7 @@ class ChatsStorageService:
         if not await self.repository.check_is_chat_exists(
             telegram_chat_id=telegram_chat_id,
         ):
-            raise ChatNotFoundException(
+            raise ChatMappingDataNotFoundException(
                 telegram_chat_id=telegram_chat_id,
             )
 
@@ -42,7 +42,7 @@ class ChatsStorageService:
         if not await self.repository.check_is_chat_exists(
             web_chat_id=web_chat_id,
         ):
-            raise ChatNotFoundException(
+            raise ChatMappingDataNotFoundException(
                 web_chat_id=web_chat_id,
             )
 
@@ -51,16 +51,16 @@ class ChatsStorageService:
         )
 
     # TODO: Change all telegram_chat_id to telegram_thread_id
-    async def get_chat_data_by_telegram_id(self, telegram_chat_id: str) -> ChatDataDTO:
+    async def get_chat_data_by_telegram_id(self, telegram_chat_id: str) -> ChatMappingDataDTO:
         if not await self.repository.check_is_chat_exists(
             telegram_chat_id=telegram_chat_id,
         ):
-            raise ChatNotFoundException(telegram_chat_id=telegram_chat_id)
+            raise ChatMappingDataNotFoundException(telegram_chat_id=telegram_chat_id)
 
         return await self.repository.get_by_telegram_id(telegram_chat_id=telegram_chat_id)
 
-    async def get_chat_data_by_web_chat_id(self, web_chat_id: str) -> ChatDataDTO:
+    async def get_chat_data_by_web_chat_id(self, web_chat_id: str) -> ChatMappingDataDTO:
         if not await self.repository.check_is_chat_exists(web_chat_id=web_chat_id):
-            raise ChatNotFoundException(web_chat_id=web_chat_id)
+            raise ChatMappingDataNotFoundException(web_chat_id=web_chat_id)
 
         return await self.repository.get_by_web_id(web_chat_id=web_chat_id)

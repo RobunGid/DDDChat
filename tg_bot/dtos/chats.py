@@ -12,6 +12,6 @@ class ChatDTO(BaseModel):
         return f"💬 {self.title}\n🆔 <code>{self.oid}</code>\n📅 {self.created_at.strftime('%d.%m.%Y %H:%M')}"
 
 
-class ChatDataDTO(BaseModel):
+class ChatMappingDataDTO(BaseModel):
     telegram_chat_id: str
     web_chat_id: str

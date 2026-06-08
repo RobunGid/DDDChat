@@ -26,7 +26,7 @@ class ChatListWebException(BaseWebException):
 
 
 @dataclass(eq=False)
-class ChatAlreadyExistsException(ApplicationException):
+class ChatMappingDataAlreadyExistsException(ApplicationException):
     telegram_chat_id: str | None = None
     web_chat_id: str | None = None
 
@@ -36,7 +36,7 @@ class ChatAlreadyExistsException(ApplicationException):
 
 
 @dataclass(eq=False)
-class ChatNotFoundException(ApplicationException):
+class ChatMappingDataNotFoundException(ApplicationException):
     telegram_chat_id: str | None = None
     web_chat_id: str | None = None
 
@@ -46,7 +46,7 @@ class ChatNotFoundException(ApplicationException):
 
 
 @dataclass(eq=False)
-class ChatDataWebException(BaseWebException):
+class ChatWebException(BaseWebException):
     @property
     def message(self):
         return "Failed to retrieve chat information"
@@ -60,7 +60,7 @@ class ChatMessageCreateWebException(BaseWebException):
 
 
 @dataclass(eq=False)
-class ChatMessageCreateTimeoutRequestException(ApplicationException):
+class ChatMessageCreateTimeoutWebException(ApplicationException):
     @property
     def message(self):
         return "Failed to created message in chat because of timeout"

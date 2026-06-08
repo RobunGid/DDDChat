@@ -4,7 +4,7 @@ from aiogram.filters import Command, ExceptionTypeFilter
 from aiogram.types import ErrorEvent, Message
 from aiogram_i18n import I18nContext
 from containers.factories import get_container
-from exceptions.chats import ChatMessageCreateTimeoutRequestException, ChatMessageCreateWebException
+from exceptions.chats import ChatMessageCreateTimeoutWebException, ChatMessageCreateWebException
 from handlers.converters.chats import convert_chat_dtos_to_translated_message
 from services.chats import ChatsStorageService
 from services.web import BaseChatWebService
@@ -44,7 +44,7 @@ async def send_message_to_chat_handler(
         await web_service.create_message_in_chat(chat_oid=chat_data.web_chat_id, message_text=message.html_text)
 
 
-@chats_router.error(ExceptionTypeFilter(ChatMessageCreateTimeoutRequestException), F.update.message.as_("message"))
+@chats_router.error(ExceptionTypeFilter(ChatMessageCreateTimeoutWebException), F.update.message.as_("message"))
 async def handle_timeout_exception(event: ErrorEvent, message: Message, bot: Bot, i18n: I18nContext):
     await bot.send_message(
         chat_id=message.chat.id,
