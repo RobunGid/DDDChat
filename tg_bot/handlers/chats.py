@@ -7,8 +7,8 @@ from exceptions.chats import ChatMessageCreateTimeoutWebException, ChatMessageCr
 from handlers.converters.chats import convert_chat_dtos_to_translated_message
 
 from containers.factories import get_container
-from services.chats import ChatsStorageService
-from services.web import BaseChatWebService
+from services.chats_storage import ChatsStorageService
+from services.chats_web import BaseChatWebService
 
 chats_router = Router(name="Chats")
 

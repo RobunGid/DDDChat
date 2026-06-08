@@ -3,7 +3,7 @@ from faststream.kafka.broker import KafkaRouter
 
 from consumers.schemas import DeleteChatSchema, NewChatMessageSchema, NewChatSchema
 from containers.factories import get_container
-from services.chats import ChatsStorageService
+from services.chats_storage import ChatsStorageService
 from settings.config import get_config
 
 config = get_config()

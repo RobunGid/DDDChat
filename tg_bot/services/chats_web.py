@@ -1,4 +1,3 @@
-from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from urllib.parse import urljoin
 
@@ -9,8 +8,9 @@ from exceptions.chats import (
     ChatMessageCreateWebException,
     ChatWebException,
 )
-from httpx import AsyncClient, ConnectTimeout, HTTPStatusError
+from httpx import ConnectTimeout, HTTPStatusError
 
+from services.base import BaseChatWebService
 from services.constants import (
     CHAT_LIST_URI,
     CHAT_MESSAGES_URI,
@@ -19,24 +19,6 @@ from services.constants import (
     DEFAULT_OFFSET,
 )
 from services.converters.chats import convert_chat_response_to_dto
-
-
-@dataclass
-class BaseChatWebService(ABC):
-    http_client: AsyncClient
-    base_url: str
-
-    @abstractmethod
-    async def get_all_chats(self) -> list[ChatDTO]:
-        pass
-
-    @abstractmethod
-    async def get_chat(self, chat_oid: str) -> ChatDTO:
-        pass
-
-    @abstractmethod
-    async def create_message_in_chat(self, chat_oid: str, message_text: str):
-        pass
 
 
 @dataclass
