@@ -4,7 +4,7 @@ services:
       context: ..
       dockerfile: tg_bot/Dockerfile
     container_name: telegram-bot
-    command: "debugpy --listen 5678 -m python main.py"
+    command: "debugpy --listen 5678 -m main"
     restart: always
     environment:
       TG_BOT_TOKEN: ${TG_BOT_TOKEN:?}
@@ -25,7 +25,7 @@ services:
     ports:
       - 8080:8080
     volumes:
-      - ./${DATABASE_NAME:?}:/db/${DATABASE_NAME:?}
+      - ../tg_bot:/db
     command: ${DATABASE_NAME:?}
 
 networks:
