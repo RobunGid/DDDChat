@@ -5,7 +5,7 @@ from consumers.handlers import router
 from settings.config import get_config
 
 
-def get_app():
+def get_consumer_app():
     config = get_config()
     broker = KafkaBroker(config.kafka_url)
     broker.include_router(router)

@@ -14,7 +14,7 @@ from logic.queries.base import (
 
 
 @dataclass(eq=False)
-class QueryMediator[QT: BaseQuery, QR](ABC):
+class QueryBus[QT: BaseQuery, QR](ABC):
     queries_map: dict[QT, BaseQueryHandler[QT, QR]] = field(
         default_factory=dict,
         kw_only=True,

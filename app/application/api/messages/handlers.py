@@ -25,13 +25,13 @@ from domain.entities.messages import (
     Chat,
     Message,
 )
+from logic.bus.base import ApplicationBus
 from logic.commands.messages import (
     CreateChatCommand,
     CreateMessageCommand,
     DeleteChatCommand,
 )
 from logic.init import init_container
-from logic.mediator.base import Mediator
 from logic.queries.messages import (
     GetChatQuery,
     GetChatsQuery,
@@ -58,9 +58,9 @@ async def create_chat_handler(
     schema: CreateChatRequestSchema,
     container: Container = Depends(init_container),
 ) -> CreateChatResponseSchema:
-    mediator = container.resolve(Mediator)
+    bus = container.resolve(ApplicationBus)
     chat: Chat
-    chat, *_ = await mediator.handle_command(CreateChatCommand(title=schema.title))
+    chat, *_ = await bus.handle_command(CreateChatCommand(title=schema.title))
     return CreateChatResponseSchema.from_entity(chat)
 
 
@@ -80,9 +80,9 @@ async def create_message_handler(
     chat_oid: str,
     container: Container = Depends(init_container),
 ) -> CreateMessageResponseSchema:
-    mediator = container.resolve(Mediator)
+    cqrs_bus = container.resolve(ApplicationBus)
     message: Message
-    message, *_ = await mediator.handle_command(
+    message, *_ = await cqrs_bus.handle_command(
         CreateMessageCommand(text=schema.text, chat_oid=chat_oid),
     )
     return CreateMessageResponseSchema.from_entity(message)
@@ -102,8 +102,8 @@ async def get_chat_handler(
     chat_oid: str,
     container: Container = Depends(init_container),
 ) -> ResponseChatSchema:
-    mediator = container.resolve(Mediator)
-    chat: Chat = await mediator.handle_query(GetChatQuery(chat_oid=chat_oid))
+    cqrs_bus = container.resolve(ApplicationBus)
+    chat: Chat = await cqrs_bus.handle_query(GetChatQuery(chat_oid=chat_oid))
     return ResponseChatSchema.from_entity(chat)
 
 
@@ -122,9 +122,9 @@ async def get_chat_messages_handler(
     filters: GetMessagesFiltersSchema = Depends(),
     container: Container = Depends(init_container),
 ) -> GetMessagesQueryResponseSchema:
-    mediator = container.resolve(Mediator)
+    application_bus = container.resolve(ApplicationBus)
 
-    messages, count = await mediator.handle_query(
+    messages, count = await application_bus.handle_query(
         GetMessagesQuery(chat_oid=chat_oid, filters=filters.to_infrastructure()),
     )
 
@@ -150,9 +150,9 @@ async def get_chats_handler(
     filters: GetChatsFiltersSchema = Depends(),
     container: Container = Depends(init_container),
 ) -> GetChatsQueryResponseSchema:
-    mediator = container.resolve(Mediator)
+    application_bus = container.resolve(ApplicationBus)
 
-    chats, count = await mediator.handle_query(
+    chats, count = await application_bus.handle_query(
         GetChatsQuery(filters=filters.to_infrastructure()),
     )
     return GetChatsQueryResponseSchema(
@@ -176,6 +176,6 @@ async def delete_chat_handler(
     chat_oid: str,
     container: Container = Depends(init_container),
 ) -> None:
-    mediator = container.resolve(Mediator)
+    application_bus = container.resolve(ApplicationBus)
 
-    await mediator.handle_command(DeleteChatCommand(chat_oid=chat_oid))
+    await application_bus.handle_command(DeleteChatCommand(chat_oid=chat_oid))

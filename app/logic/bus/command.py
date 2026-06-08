@@ -18,7 +18,7 @@ from logic.commands.base import (
 
 
 @dataclass(eq=False)
-class CommandMediator[CT, CR](ABC):
+class CommandBus[CT, CR](ABC):
     commands_map: dict[CT, list[CommandHandler]] = field(
         default_factory=lambda: defaultdict(list),
         kw_only=True,

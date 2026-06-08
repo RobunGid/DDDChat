@@ -10,11 +10,11 @@ from infrastructure.repositories.messages.memory import (
     MemoryMessagesRepository,
 )
 from infrastructure.websockets.managers import BaseConnectionManager, ConnectionManager
+from logic.bus.base import ApplicationBus
 from logic.commands.messages import (
     CreateChatCommand,
     CreateChatCommandHandler,
 )
-from logic.mediator.base import Mediator
 
 
 def init_dummy_container() -> Container:
@@ -37,23 +37,23 @@ def init_dummy_container() -> Container:
         scope=Scope.singleton,
     )
 
-    def init_mediator() -> Mediator:
-        mediator = Mediator()
+    def init_application_bus() -> ApplicationBus:
+        application_bus = ApplicationBus()
 
-        mediator.register_command(
+        application_bus.register_command(
             CreateChatCommand,
             [
                 CreateChatCommandHandler(
-                    _mediator=mediator,
+                    _command_bus=application_bus,
                     chats_repository=container.resolve(BaseChatsRepository),
                 ),
             ],
         )
 
-        mediator.register_event(NewChatCreatedEvent, [])
+        application_bus.register_event(NewChatCreatedEvent, [])
 
-        return mediator
+        return application_bus
 
-    container.register(Mediator, factory=init_mediator, scope=Scope.singleton)
+    container.register(ApplicationBus, factory=init_application_bus, scope=Scope.singleton)
 
     return container

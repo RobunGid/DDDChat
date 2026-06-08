@@ -38,7 +38,7 @@ class CreateChatCommandHandler(CommandHandler[CreateChatCommand, Chat]):
         title = Title(value=command.title)
         new_chat = Chat.create_chat(title=title)
         await self.chats_repository.add_chat(new_chat)
-        await self._mediator.publish(new_chat.pull_events())
+        await self._command_bus.publish(new_chat.pull_events())
         return new_chat
 
 
@@ -62,7 +62,7 @@ class CreateMessageCommandHandler(CommandHandler[CreateMessageCommand, Message])
         message = Message(text=Text(value=command.text), chat_oid=command.chat_oid)
         chat.add_message(message)
         await self.messages_repository.add_message(message=message)
-        await self._mediator.publish(chat.pull_events())
+        await self._command_bus.publish(chat.pull_events())
         return message
 
 
@@ -83,4 +83,4 @@ class DeleteChatCommandHandler(CommandHandler[DeleteChatCommand, None]):
 
         await self.chats_repository.delete_chat_by_oid(oid=command.chat_oid)
         chat.delete()
-        await self._mediator.publish(chat.pull_events())
+        await self._command_bus.publish(chat.pull_events())

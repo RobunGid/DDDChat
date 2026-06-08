@@ -18,7 +18,7 @@ from logic.events.base import (
 
 
 @dataclass(eq=False)
-class EventMediator[ET, ER](ABC):
+class EventBus[ET, ER](ABC):
     events_map: dict[ET, list[EventHandler]] = field(
         default_factory=lambda: defaultdict(list),
         kw_only=True,

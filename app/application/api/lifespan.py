@@ -1,7 +1,7 @@
 from infrastructure.message_brokers.base import BaseMessageBroker
+from logic.bus.base import ApplicationBus
 from logic.events.messages import NewMessageReceivedFromBrokerEvent
 from logic.init import init_container
-from logic.mediator.base import Mediator
 from settings.config import Config
 
 
@@ -21,12 +21,12 @@ async def consumer_in_background():
     container = init_container()
     config = container.resolve(Config)
     message_broker: BaseMessageBroker = container.resolve(BaseMessageBroker)
-    mediator = container.resolve(Mediator)
+    cqrs_bus = container.resolve(ApplicationBus)
 
     async for msg in message_broker.start_consuming(
         config.new_message_received_event_topic,
     ):
-        await mediator.publish(
+        await cqrs_bus.publish(
             [
                 NewMessageReceivedFromBrokerEvent(
                     message_text=msg["message_text"],

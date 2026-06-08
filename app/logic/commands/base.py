@@ -9,7 +9,7 @@ from typing import (
     TypeVar,
 )
 
-from logic.mediator.event import EventMediator
+from logic.bus.event import EventBus
 
 
 @dataclass(frozen=True)
@@ -23,7 +23,7 @@ CR = TypeVar("CR", bound=Any)  # Command Result
 
 @dataclass(frozen=True)
 class CommandHandler(ABC, Generic[CT, CR]):
-    _mediator: EventMediator
+    _command_bus: EventBus
 
     @abstractmethod
     async def handle(self, command: CT) -> CR:

@@ -31,6 +31,8 @@ from infrastructure.websockets.managers import (
     BaseConnectionManager,
     ConnectionManager,
 )
+from logic.bus.base import ApplicationBus
+from logic.bus.event import EventBus
 from logic.commands.messages import (
     CreateChatCommand,
     CreateChatCommandHandler,
@@ -46,8 +48,6 @@ from logic.events.messages import (
     NewMessageReceivedFromBrokerEvent,
     NewMessageReceivedFromBrokerEventHandler,
 )
-from logic.mediator.base import Mediator
-from logic.mediator.event import EventMediator
 from logic.queries.messages import (
     GetChatQuery,
     GetChatQueryHandler,
@@ -132,20 +132,20 @@ def _init_container() -> Container:
         scope=Scope.singleton,
     )
 
-    def init_mediator() -> Mediator:
-        mediator = Mediator()
+    def init_application_bus() -> ApplicationBus:
+        application_bus = ApplicationBus()
 
         # Message handlers
         create_chat_handler = CreateChatCommandHandler(
-            _mediator=mediator,
+            _command_bus=application_bus,
             chats_repository=container.resolve(BaseChatsRepository),
         )
         delete_chat_handler = DeleteChatCommandHandler(
-            _mediator=mediator,
+            _command_bus=application_bus,
             chats_repository=container.resolve(BaseChatsRepository),
         )
         create_message_handler = CreateMessageCommandHandler(
-            _mediator=mediator,
+            _command_bus=application_bus,
             messages_repository=container.resolve(BaseMessagesRepository),
             chats_repository=container.resolve(BaseChatsRepository),
         )
@@ -171,52 +171,52 @@ def _init_container() -> Container:
             connection_manager=container.resolve(BaseConnectionManager),
         )
         # Events
-        mediator.register_event(
+        application_bus.register_event(
             NewChatCreatedEvent,
             [new_chat_created_event_handler],
         )
-        mediator.register_event(
+        application_bus.register_event(
             NewMessageReceivedEvent,
             [new_message_received_event_handler],
         )
-        mediator.register_event(
+        application_bus.register_event(
             NewMessageReceivedFromBrokerEvent,
             [new_message_received_from_broker_event_handler],
         )
-        mediator.register_event(
+        application_bus.register_event(
             ChatDeletedEvent,
             [chat_deleted_event_handler],
         )
         # Commands
-        mediator.register_command(
+        application_bus.register_command(
             CreateChatCommand,
             [create_chat_handler],
         )
-        mediator.register_command(
+        application_bus.register_command(
             DeleteChatCommand,
             [delete_chat_handler],
         )
-        mediator.register_command(
+        application_bus.register_command(
             CreateMessageCommand,
             [create_message_handler],
         )
         # Queries
-        mediator.register_query(
+        application_bus.register_query(
             GetChatQuery,
             container.resolve(GetChatQueryHandler),
         )
-        mediator.register_query(
+        application_bus.register_query(
             GetMessagesQuery,
             container.resolve(GetMessagesQueryHandler),
         )
-        mediator.register_query(
+        application_bus.register_query(
             GetChatsQuery,
             container.resolve(GetChatsQueryHandler),
         )
-        return mediator
+        return application_bus
 
-    container.register(Mediator, factory=init_mediator)
-    container.register(EventMediator, factory=init_mediator)
+    container.register(ApplicationBus, factory=init_application_bus)
+    container.register(EventBus, factory=init_application_bus)
     container.register(
         BaseConnectionManager,
         instance=ConnectionManager(),

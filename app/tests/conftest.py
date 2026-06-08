@@ -2,7 +2,7 @@ from punq import Container
 from pytest import fixture
 
 from infrastructure.repositories.messages.base import BaseChatsRepository
-from logic.mediator.base import Mediator
+from logic.bus.base import ApplicationBus
 from tests.fixtures import init_dummy_container
 
 
@@ -12,8 +12,8 @@ def container() -> Container:
 
 
 @fixture(scope="function")
-def mediator(container: Container) -> Mediator:
-    return container.resolve(Mediator)
+def application_bus(container: Container) -> ApplicationBus:
+    return container.resolve(ApplicationBus)
 
 
 @fixture(scope="function")

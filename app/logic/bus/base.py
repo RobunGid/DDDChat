@@ -9,6 +9,9 @@ from typing import (
 )
 
 from domain.events.base import BaseEvent
+from logic.bus.command import CommandBus
+from logic.bus.event import EventBus
+from logic.bus.query import QueryBus
 from logic.commands.base import (
     BaseCommand,
     CommandHandler,
@@ -16,10 +19,7 @@ from logic.commands.base import (
 from logic.events.base import (
     EventHandler,
 )
-from logic.exceptions.mediator import CommandHandlersNotRegisteredException
-from logic.mediator.command import CommandMediator
-from logic.mediator.event import EventMediator
-from logic.mediator.query import QueryMediator
+from logic.exceptions.application_bus import CommandHandlersNotRegisteredException
 from logic.queries.base import (
     BaseQuery,
     BaseQueryHandler,
@@ -27,10 +27,10 @@ from logic.queries.base import (
 
 
 @dataclass(eq=False)
-class Mediator[ET, ER, QT, QR, CT, CR](
-    EventMediator,
-    QueryMediator,
-    CommandMediator,
+class ApplicationBus[ET, ER, QT, QR, CT, CR](
+    EventBus,
+    QueryBus,
+    CommandBus,
 ):
     events_map: dict[ET, list[EventHandler]] = field(
         default_factory=lambda: defaultdict(list),
