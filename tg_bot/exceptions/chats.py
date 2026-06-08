@@ -36,7 +36,7 @@ class ChatAlreadyExistsException(ApplicationException):
 
 
 @dataclass(eq=False)
-class ChatDataNotFoundException(ApplicationException):
+class ChatNotFoundException(ApplicationException):
     telegram_chat_id: str | None = None
     web_chat_id: str | None = None
 

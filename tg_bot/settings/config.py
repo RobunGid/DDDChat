@@ -17,6 +17,9 @@ class Config(BaseSettings):
     new_chats_event_topic: str = Field(
         alias="NEW_CHATS_EVENT_TOPIC",
     )
+    chats_deleted_event_topic: str = Field(
+        alias="CHATS_DELETED_EVENT_TOPIC",
+    )
     telegram_support_group_id: str = Field(
         alias="TELEGRAM_SUPPORT_GROUP_ID",
     )

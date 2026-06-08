@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-class ChatMessageSchema(BaseModel):
+class NewChatMessageSchema(BaseModel):
     event_id: str
     occurred_at: str
     message_text: str
@@ -9,6 +9,10 @@ class ChatMessageSchema(BaseModel):
     chat_oid: str
 
 
-class ChatSchema(BaseModel):
+class NewChatSchema(BaseModel):
     chat_oid: str
     chat_title: str
+
+
+class DeleteChatSchema(BaseModel):
+    chat_oid: str

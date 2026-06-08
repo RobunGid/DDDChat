@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from dtos.chats import ChatDataDTO
-from exceptions.chats import ChatAlreadyExistsException, ChatDataNotFoundException
+from exceptions.chats import ChatAlreadyExistsException, ChatNotFoundException
 from repositories.chats.base import BaseChatsRepository
 
 
@@ -26,17 +26,41 @@ class ChatsStorageService:
             ),
         )
 
+    async def delete_chat_by_telegram_chat_id(self, telegram_chat_id: str):
+        if not await self.repository.check_is_chat_exists(
+            telegram_chat_id=telegram_chat_id,
+        ):
+            raise ChatNotFoundException(
+                telegram_chat_id=telegram_chat_id,
+            )
+
+        await self.repository.delete_chat_by_telegram_chat_id(
+            telegram_chat_id=telegram_chat_id,
+        )
+
+    async def delete_chat_by_web_chat_id(self, web_chat_id: str):
+        if not await self.repository.check_is_chat_exists(
+            web_chat_id=web_chat_id,
+        ):
+            raise ChatNotFoundException(
+                web_chat_id=web_chat_id,
+            )
+
+        await self.repository.delete_chat_by_web_chat_id(
+            web_chat_id=web_chat_id,
+        )
+
     # TODO: Change all telegram_chat_id to telegram_thread_id
     async def get_chat_data_by_telegram_id(self, telegram_chat_id: str) -> ChatDataDTO:
         if not await self.repository.check_is_chat_exists(
             telegram_chat_id=telegram_chat_id,
         ):
-            raise ChatDataNotFoundException(telegram_chat_id=telegram_chat_id)
+            raise ChatNotFoundException(telegram_chat_id=telegram_chat_id)
 
         return await self.repository.get_by_telegram_id(telegram_chat_id=telegram_chat_id)
 
     async def get_chat_data_by_web_chat_id(self, web_chat_id: str) -> ChatDataDTO:
         if not await self.repository.check_is_chat_exists(web_chat_id=web_chat_id):
-            raise ChatDataNotFoundException(web_chat_id=web_chat_id)
+            raise ChatNotFoundException(web_chat_id=web_chat_id)
 
         return await self.repository.get_by_web_id(web_chat_id=web_chat_id)

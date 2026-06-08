@@ -4,9 +4,11 @@ from typing import overload
 
 from aiosqlite import connect
 from dtos.chats import ChatDataDTO
-from exceptions.chats import ChatDataNotFoundException
+from exceptions.chats import ChatNotFoundException
 from repositories.queries import (
     ADD_NEW_CHAT_DATA_SQL_QUERY,
+    DELETE_CHAT_BY_TELEGRAM_CHAT_ID_SQL_QUERY,
+    DELETE_CHAT_BY_WEB_CHAT_ID_SQL_QUERY,
     GET_CHAT_DATA_BY_TELEGRAM_ID_SQL_QUERY,
     GET_CHAT_DATA_BY_WEB_ID_SQL_QUERY,
     GET_CHATS_COUNT_SQL_QUERY,
@@ -54,6 +56,22 @@ class BaseChatsRepository(ABC):
     async def add_chat(self, chat_data: ChatDataDTO) -> ChatDataDTO:
         pass
 
+    @abstractmethod
+    async def delete_chat_by_telegram_chat_id(
+        self,
+        *,
+        telegram_chat_id: str,
+    ) -> None:
+        pass
+
+    @abstractmethod
+    async def delete_chat_by_web_chat_id(
+        self,
+        *,
+        web_chat_id: str,
+    ) -> None:
+        pass
+
 
 @dataclass(eq=False)
 class SQLChatsRepository(BaseChatsRepository):
@@ -78,7 +96,7 @@ class SQLChatsRepository(BaseChatsRepository):
             result = await cursor.fetchone()
 
         if result is None:
-            raise ChatDataNotFoundException(telegram_chat_id=telegram_chat_id)
+            raise ChatNotFoundException(telegram_chat_id=telegram_chat_id)
 
         return ChatDataDTO(
             web_chat_id=result[0],
@@ -91,7 +109,7 @@ class SQLChatsRepository(BaseChatsRepository):
             result = await cursor.fetchone()
 
         if result is None:
-            raise ChatDataNotFoundException(web_chat_id=web_chat_id)
+            raise ChatNotFoundException(web_chat_id=web_chat_id)
 
         return ChatDataDTO(
             web_chat_id=result[0],
@@ -111,3 +129,13 @@ class SQLChatsRepository(BaseChatsRepository):
             return False
 
         return result[0] > 0
+
+    async def delete_chat_by_telegram_chat_id(self, *, telegram_chat_id: str) -> None:
+        async with connect(self.database_url) as connection:
+            await connection.execute(DELETE_CHAT_BY_TELEGRAM_CHAT_ID_SQL_QUERY, (telegram_chat_id,))
+            await connection.commit()
+
+    async def delete_chat_by_web_chat_id(self, *, web_chat_id: str) -> None:
+        async with connect(self.database_url) as connection:
+            await connection.execute(DELETE_CHAT_BY_WEB_CHAT_ID_SQL_QUERY, (web_chat_id,))
+            await connection.commit()
