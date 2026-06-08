@@ -1,6 +1,6 @@
 import sqlite3
 
-from repositories.queries import CREATE_MAPPING_TABLE_SQL_QUERY
+from repositories.queries import CREATE_CHAT_MAPPING_DATA_TABLE_SQL_QUERY
 
 from settings.config import get_config
 
@@ -10,4 +10,4 @@ def create_tables():
 
     with sqlite3.connect(database=config.database_name) as connection:
         cursor = connection.cursor()
-        cursor.execute(CREATE_MAPPING_TABLE_SQL_QUERY)
+        cursor.execute(CREATE_CHAT_MAPPING_DATA_TABLE_SQL_QUERY)

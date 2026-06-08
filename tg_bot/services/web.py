@@ -48,7 +48,7 @@ class ChatWebService(BaseChatWebService):
         if not response.is_success:
             raise ChatListWebException(status_code=response.status_code, response_content=response.content.decode())
         json_data = response.json()
-        return [convert_chat_response_to_dto(chat_data=chat_data) for chat_data in json_data["items"]]
+        return [convert_chat_response_to_dto(chat=chat) for chat in json_data["items"]]
 
     async def get_chat(self, chat_oid: str) -> ChatDTO:
         response = await self.http_client.get(
@@ -60,7 +60,7 @@ class ChatWebService(BaseChatWebService):
                 response_content=response.content.decode(),
             )
         json_data = response.json()
-        return convert_chat_response_to_dto(chat_data=json_data)
+        return convert_chat_response_to_dto(chat=json_data)
 
     async def create_message_in_chat(self, chat_oid: str, message_text: str):
         try:
