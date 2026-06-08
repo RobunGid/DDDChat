@@ -94,8 +94,8 @@ class SQLChatsRepository(BaseChatsRepository):
             raise ChatDataNotFoundException(web_chat_id=web_chat_id)
 
         return ChatDataDTO(
-            telegram_chat_id=result[0],
-            web_chat_id=result[1],
+            web_chat_id=result[0],
+            telegram_chat_id=str(result[1]),
         )
 
     async def check_is_chat_exists(

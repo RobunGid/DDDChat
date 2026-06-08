@@ -1,11 +1,9 @@
 from aiogram import Bot
-from aiogram.enums.parse_mode import ParseMode
 from consumers.schemas import ChatMessageSchema, ChatSchema
 from containers.factories import get_container
 from faststream import Context
 from faststream.kafka.broker import KafkaRouter
 from services.chats import ChatsStorageService
-from services.web import BaseChatWebService
 
 from settings.config import get_config
 
@@ -18,18 +16,15 @@ router = KafkaRouter()
 async def new_message_subscription_handler(message: ChatMessageSchema, key: bytes = Context("message.raw_message.key")):
     container = get_container()
     async with container() as request_container:
-        service = await request_container.get(BaseChatWebService)
-        listeners = await service.get_chat_listeners(chat_oid=key.decode())
-        chat_data = await service.get_chat_data(chat_oid=key.decode())
+        storage_service = await request_container.get(ChatsStorageService)
+        chat_data = await storage_service.get_chat_data_by_web_chat_id(web_chat_id=message.chat_oid)
 
         bot = await request_container.get(Bot)
-
-        for listener in listeners:
-            await bot.send_message(
-                chat_id=listener.oid,
-                text=f"{chat_data.format_to_html()}\n\n<pre>{message.message_text}</pre>",
-                parse_mode=ParseMode.HTML,
-            )
+        await bot.send_message(
+            chat_id=config.telegram_support_group_id,
+            text=message.message_text,
+            message_thread_id=int(chat_data.telegram_chat_id),
+        )
 
 
 @router.subscriber(config.new_chats_event_topic, group_id=config.kafka_group_id)

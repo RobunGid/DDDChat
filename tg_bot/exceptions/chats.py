@@ -26,20 +26,6 @@ class ChatListWebException(BaseWebException):
 
 
 @dataclass(eq=False)
-class ChatListenerListWebException(BaseWebException):
-    @property
-    def message(self):
-        return "Failed to retrieve list of chat listeners"
-
-
-@dataclass(eq=False)
-class ChatListenerAddWebException(BaseWebException):
-    @property
-    def message(self):
-        return "Failed to add listener to chat"
-
-
-@dataclass(eq=False)
 class ChatAlreadyExistsException(ApplicationException):
     telegram_chat_id: str | None = None
     web_chat_id: str | None = None

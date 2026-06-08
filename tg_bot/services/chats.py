@@ -34,3 +34,9 @@ class ChatsStorageService:
             raise ChatDataNotFoundException(telegram_chat_id=telegram_chat_id)
 
         return await self.repository.get_by_telegram_id(telegram_chat_id=telegram_chat_id)
+
+    async def get_chat_data_by_web_chat_id(self, web_chat_id: str) -> ChatDataDTO:
+        if not await self.repository.check_is_chat_exists(web_chat_id=web_chat_id):
+            raise ChatDataNotFoundException(web_chat_id=web_chat_id)
+
+        return await self.repository.get_by_web_id(web_chat_id=web_chat_id)

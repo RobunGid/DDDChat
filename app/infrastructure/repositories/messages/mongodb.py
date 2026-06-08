@@ -4,7 +4,7 @@ from typing import Iterable
 
 from motor.core import AgnosticClient
 
-from domain.entities.messages import Chat, ChatListener, Message
+from domain.entities.messages import Chat, Message
 from infrastructure.repositories.filters.messages import (
     GetChatsFilters,
     GetMessagesFilters,
@@ -16,7 +16,6 @@ from infrastructure.repositories.messages.base import (
 from infrastructure.repositories.messages.converters import (
     convert_chat_document_to_entity,
     convert_chat_entity_to_document,
-    convert_chat_listener_document_to_entity,
     convert_message_document_to_entity,
     convert_message_entity_to_document,
 )
@@ -65,15 +64,6 @@ class MongoDBChatsRepository(BaseChatsRepository, BaseMongoDBRepository):
 
     async def delete_chat_by_oid(self, oid: str) -> None:
         await self._collection.delete_one(filter={"oid": oid})
-
-    async def add_telegram_support_listener(self, chat_oid: str, telegram_chat_id: str) -> None:
-        await self._collection.update_one(filter={"oid": chat_oid}, update={"$push": {"listeners": telegram_chat_id}})
-
-    async def get_chat_listeners(self, chat_oid: str) -> Iterable[ChatListener]:
-        chat = await self.get_chat_by_oid(oid=chat_oid)
-        if not chat:
-            return []
-        return [convert_chat_listener_document_to_entity(listener_id=listener.oid) for listener in chat.listeners]
 
 
 @dataclass

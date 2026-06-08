@@ -6,11 +6,9 @@ from dataclasses import (
 from domain.entities.base import BaseEntity
 from domain.events.messages import (
     ChatDeletedEvent,
-    ListenerAddedEvent,
     NewChatCreatedEvent,
     NewMessageReceivedEvent,
 )
-from domain.exceptions.chats import ListenerAlreadyExistsException
 from domain.values.messages import (
     Text,
     Title,
@@ -24,15 +22,9 @@ class Message(BaseEntity):
 
 
 @dataclass(eq=False)
-class ChatListener(BaseEntity):
-    pass
-
-
-@dataclass(eq=False)
 class Chat(BaseEntity):
     title: Title
     messages: set[Message] = field(default_factory=set, kw_only=True)
-    listeners: set[ChatListener] = field(default_factory=set, kw_only=True)
     is_deleted: bool = field(default=False, kw_only=True)
 
     @classmethod
@@ -61,10 +53,3 @@ class Chat(BaseEntity):
         self.register_event(
             ChatDeletedEvent(chat_oid=self.oid),
         )
-
-    def add_listener(self, listener: ChatListener) -> None:
-        if listener in self.listeners:
-            raise ListenerAlreadyExistsException(listener_oid=listener.oid)
-
-        self.listeners.add(listener)
-        self.register_event(ListenerAddedEvent(listener_oid=listener.oid))

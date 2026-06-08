@@ -25,5 +25,4 @@ class Config(BaseSettings):
         default="new-messages",
         alias="NEW_MESSAGE_RECEIVED_EVENT_TOPIC",
     )
-    chats_new_listener_added_topic: str = Field(default="new-chat-listener", alias="CHATS_NEW_LISTENER_ADDED_TOPIC")
     kafka_url: str = Field(alias="KAFKA_URL")

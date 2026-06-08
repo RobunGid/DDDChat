@@ -5,7 +5,6 @@ from typing import (
 
 from domain.entities.messages import (
     Chat,
-    ChatListener,
     Message,
 )
 from domain.values.messages import (
@@ -33,12 +32,7 @@ def convert_message_document_to_entity(message_document: Mapping[str, Any]) -> M
 
 
 def convert_chat_entity_to_document(chat: Chat) -> dict:
-    return {"oid": chat.oid, "title": chat.title.as_generic_type(), "created_at": chat.created_at, "listeners": []}
-
-
-def convert_chat_listener_document_to_entity(listener_id: str) -> ChatListener:
-    # TODO: accept listener entity
-    return ChatListener(oid=listener_id)
+    return {"oid": chat.oid, "title": chat.title.as_generic_type(), "created_at": chat.created_at}
 
 
 def convert_chat_document_to_entity(chat_document: Mapping[str, Any]) -> Chat:
@@ -46,8 +40,4 @@ def convert_chat_document_to_entity(chat_document: Mapping[str, Any]) -> Chat:
         title=Title(chat_document["title"]),
         oid=chat_document["oid"],
         created_at=chat_document["created_at"],
-        listeners={
-            convert_chat_listener_document_to_entity(listener_id=listener_id)
-            for listener_id in chat_document["listeners"]
-        },
     )
