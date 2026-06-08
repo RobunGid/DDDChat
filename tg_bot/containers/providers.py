@@ -17,8 +17,12 @@ class DefaultProvider(Provider):
     def get_http_client(self) -> AsyncClient:
         return AsyncClient()
 
-    @provide(scope=Scope.APP)
-    def get_chat_web_service(self, config: Config, http_client: AsyncClient) -> BaseChatWebService:
+    @provide(scope=Scope.REQUEST)
+    def get_chat_web_service(
+        self,
+        config: Config,
+        http_client: AsyncClient,
+    ) -> AnyOf[BaseChatWebService, ChatWebService]:
         return ChatWebService(http_client=http_client, base_url=config.web_api_base_url)
 
     @provide(scope=Scope.REQUEST)

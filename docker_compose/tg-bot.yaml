@@ -4,7 +4,7 @@ services:
       context: ..
       dockerfile: tg_bot/Dockerfile
     container_name: telegram-bot
-    command: "python main.py"
+    command: "debugpy --listen 5678 -m python main.py"
     restart: always
     environment:
       TG_BOT_TOKEN: ${TG_BOT_TOKEN:?}
@@ -17,7 +17,17 @@ services:
       - backend
     volumes:
       - ../tg_bot/:/app/
+    ports:
+      - "5676:5678"
       
+  sqliteweb:
+    image: tomdesinto/sqliteweb
+    ports:
+      - 8080:8080
+    volumes:
+      - ./${DATABASE_NAME:?}:/db/${DATABASE_NAME:?}
+    command: ${DATABASE_NAME:?}
+
 networks:
   backend:
     driver: bridge

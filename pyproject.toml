@@ -24,6 +24,7 @@ dependencies = [
     "dishka (>=1.10.1,<2.0.0)",
     "faststream[cli] (>=0.7.1,<0.8.0)",
     "aiosqlite (>=0.22.1,<0.23.0)",
+    "debugpy (>=1.8.21,<2.0.0)",
 ]
 
 

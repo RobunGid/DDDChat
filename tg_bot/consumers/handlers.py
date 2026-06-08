@@ -4,6 +4,7 @@ from consumers.schemas import ChatMessageSchema, ChatSchema
 from containers.factories import get_container
 from faststream import Context
 from faststream.kafka.broker import KafkaRouter
+from services.chats import ChatsService
 from services.web import BaseChatWebService
 
 from settings.config import get_config
@@ -32,11 +33,12 @@ async def new_message_subscription_handler(message: ChatMessageSchema, key: byte
 
 
 @router.subscriber(config.new_chats_event_topic, group_id=config.kafka_group_id)
-async def new_chat_subscription_handler(chat: ChatSchema, key: bytes = Context("message.raw_message.key")):
-    # TODO: save telegram thread id and map it to chat_oid
+async def new_chat_subscription_handler(data: ChatSchema):
     container = get_container()
 
     async with container() as request_container:
         bot = await request_container.get(Bot)
-        topic_name = f"{chat.chat_title} | {chat.chat_oid}"
-        await bot.create_forum_topic(chat_id=config.telegram_support_group_id, name=topic_name)
+        chats_service = await request_container.get(ChatsService)
+        topic_name = f"{data.chat_title} | {data.chat_oid}"
+        forum_topic = await bot.create_forum_topic(chat_id=config.telegram_support_group_id, name=topic_name)
+        await chats_service.add_chat(telegram_chat_id=str(forum_topic.message_thread_id), web_chat_id=data.chat_oid)
