@@ -10,7 +10,9 @@ services:
     container_name: main-app
     ports: 
       - "${API_PORT}:8000"
-    command: "uvicorn --factory application.api.main:create_app --reload --host 0.0.0.0 --port 8000"
+      - 5679:5678
+      - 5680:5679
+    command: "debugpy --listen 0.0.0.0:5678 -m uvicorn --factory application.api.main:create_app --reload --host 0.0.0.0 --port 8000"
     volumes:
       - ../app/:/app/
     networks:

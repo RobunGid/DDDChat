@@ -12,10 +12,13 @@ from application.api.lifespan import (
 )
 from application.api.messages.exception_handlers import (
     chat_not_found_exception_handler,
+    chat_title_too_long_exception_handler,
     chat_with_that_title_already_exists_exception_handler,
+    empty_text_exception_handler,
 )
 from application.api.messages.handlers import router as message_router
 from application.api.messages.websockets.messages import router as message_ws_router
+from domain.exceptions.messages import EmptyTextException, TitleTooLongException
 from logic.exceptions.messages import ChatNotFoundException, ChatWithThatTitleAlreadyExistsException
 from logic.init import init_container
 
@@ -48,6 +51,11 @@ def create_app() -> FastAPI:
     app.add_exception_handler(
         ChatWithThatTitleAlreadyExistsException,
         chat_with_that_title_already_exists_exception_handler,
+    )
+    app.add_exception_handler(TitleTooLongException, chat_title_too_long_exception_handler)
+    app.add_exception_handler(
+        EmptyTextException,
+        empty_text_exception_handler,
     )
 
     return app

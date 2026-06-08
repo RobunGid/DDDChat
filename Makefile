@@ -58,9 +58,13 @@ storages:
 storages-down:
 	${DC} -f ${STORAGES_FILE} down	
 
-.PHONY: test
+.PHONY: app-test
 app-test:
 	${EXEC} ${APP_CONTAINER} pytest
+
+.PHONY: app-test-debugger
+app-test-debugger:
+	${EXEC} ${APP_CONTAINER} debugpy --listen 0.0.0.0:5679 --wait-for-client -m pytest tests/ -v
 
 .PHONY: tg-bot
 tg-bot:

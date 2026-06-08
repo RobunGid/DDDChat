@@ -16,4 +16,4 @@ class TitleTooLongException(ApplicationException):
 class EmptyTextException(ApplicationException):
     @property
     def message(self):
-        return "Message cannot be empty"
+        return "Text cannot be empty"

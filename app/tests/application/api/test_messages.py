@@ -17,7 +17,7 @@ async def test_create_chat_success(
 ):
     url = app.url_path_for("create_chat_handler")
     title = faker.text(max_nb_chars=30)
-    response: Response = client.post(url=url, json={"title": title})
+    response = client.post(url=url, json={"title": title})
 
     assert response.is_success
 
@@ -35,7 +35,7 @@ async def test_create_chat_fail_title_too_long(
     title = faker.text(255) + faker.text(255)
     response: Response = client.post(url=url, json={"title": title})
 
-    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.json()
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT, response.json()
 
     json_data = response.json()
     assert json_data["detail"]["error"]
@@ -49,7 +49,7 @@ async def test_create_chat_fail_title_empty(
     url = app.url_path_for("create_chat_handler")
     response: Response = client.post(url=url, json={"title": ""})
 
-    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.json()
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT, response.json()
 
     json_data = response.json()
     assert json_data["detail"]["error"]

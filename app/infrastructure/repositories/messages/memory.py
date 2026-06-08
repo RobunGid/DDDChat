@@ -4,9 +4,9 @@ from dataclasses import (
 )
 from typing import Iterable
 
-from domain.entities.messages import Chat
-from infrastructure.repositories.filters.messages import GetChatsFilters
-from infrastructure.repositories.messages.base import BaseChatsRepository
+from domain.entities.messages import Chat, Message
+from infrastructure.repositories.filters.messages import GetChatsFilters, GetMessagesFilters
+from infrastructure.repositories.messages.base import BaseChatsRepository, BaseMessagesRepository
 
 
 @dataclass
@@ -31,4 +31,19 @@ class MemoryChatsRepository(BaseChatsRepository):
             return None
 
     async def get_chats(self, filters: GetChatsFilters) -> tuple[Iterable[Chat], int]:
-        return self._saved_chats, len(self._saved_chats)
+        return self._saved_chats[filters.offset :][: filters.limit], len(self._saved_chats)
+
+    async def delete_chat_by_oid(self, oid: str) -> None:
+        self._saved_chats = [chat for chat in self._saved_chats if chat.oid != oid]
+
+
+@dataclass
+class MemoryMessagesRepository(BaseMessagesRepository):
+    _saved_messages: list[Message] = field(default_factory=list, kw_only=True)
+
+    async def get_messages(self, chat_oid: str, filters: GetMessagesFilters) -> tuple[Iterable[Message], int]:
+        filtered_messages = [message for message in self._saved_messages if message.chat_oid == chat_oid]
+        return filtered_messages[filters.offset :][: filters.limit], len(self._saved_messages)
+
+    async def add_message(self, message: Message) -> None:
+        return await super().add_message(message)
