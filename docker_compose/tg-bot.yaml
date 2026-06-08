@@ -19,7 +19,33 @@ services:
       - ../tg_bot/:/app/
     ports:
       - "5676:5678"
-      
+
+  telegram-bot-consumer:
+    build:
+      context: ..
+      dockerfile: tg_bot/Dockerfile
+    container_name: telegram-bot-consumer
+    restart: always
+    environment:
+      TG_BOT_TOKEN: ${TG_BOT_TOKEN:?}
+      WEB_API_BASE_URL: ${WEB_API_BASE_URL:?}
+      KAFKA_URL: ${KAFKA_URL:?} 
+      MONGO_DB_CONNECTION_URI: ${MONGO_DB_CONNECTION_URI:?}
+      TELEGRAM_SUPPORT_GROUP_ID: ${TELEGRAM_SUPPORT_GROUP_ID:?}
+      DATABASE_NAME: ${DATABASE_NAME:?}
+    networks:
+      - backend
+    volumes:
+      - ../tg_bot/:/app/
+    depends_on:
+      kafka:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    ports:
+      - 5677:5678
+    command: "debugpy --listen 0.0.0.0:5678 -m faststream run --factory consumers.main:get_app --reload --app-dir ."
+
   sqliteweb:
     image: tomdesinto/sqliteweb
     ports:

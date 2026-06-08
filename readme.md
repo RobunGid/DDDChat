@@ -13,9 +13,6 @@
    git clone https://github.com/RobunGid/DDDChat.git
    cd DDDChat
 
-2. Install all required packages in `Requirements` section.
-
-
 ### Implemented Commands
 
 * `make app` - up application and database/infrastructure

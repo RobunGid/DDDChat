@@ -7,7 +7,6 @@ APP_FILE = docker_compose/app.yaml
 MESSAGING_FILE = docker_compose/messaging.yaml
 STORAGES_FILE = docker_compose/storages.yaml
 TG_BOT_FILE = docker_compose/tg-bot.yaml
-TG_BOT_CONSUMER_FILE = docker_compose/tg-bot-consumer.yaml
 
 APP_CONTAINER = main-app
 MESSAGING_CONTAINER = main-kafka
@@ -17,7 +16,7 @@ TG_BOT_CONSUMER_CONTAINER = telegram-bot-consumer
 
 .PHONY: all
 all:
-	${DC} -f ${APP_FILE} -f ${STORAGES_FILE} -f ${MESSAGING_FILE} -f ${TG_BOT_FILE} -f ${TG_BOT_CONSUMER_FILE} ${ENV} up --build -d
+	${DC} -f ${APP_FILE} -f ${STORAGES_FILE} -f ${MESSAGING_FILE} -f ${TG_BOT_FILE} ${ENV} up --build -d
 
 .PHONY: all-down
 all-down:
@@ -79,18 +78,6 @@ tg-bot-logs:
 tg-bot-shell:
 	${EXEC} ${TG_BOT_CONTAINER} bash	
 
-.PHONY: tg-bot-consumer
-tg-bot-consumer:
-	${DC} -f ${TG_BOT_CONSUMER_FILE} ${ENV} up --build -d
-
-.PHONY: tg-bot-consumer-down
-tg-bot-consumer-down:
-	${DC} -f ${TG_BOT_CONSUMER_FILE} ${ENV} down	
-
 .PHONY: tg-bot-consumer-logs
 tg-bot-consumer-logs:
 	${LOGS} ${TG_BOT_CONSUMER_CONTAINER} -f
-
-.PHONY: tg-bot-consumer-shell
-tg-bot-consumer-shell:
-	${EXEC} ${TG_BOT_CONSUMER_CONTAINER} bash
