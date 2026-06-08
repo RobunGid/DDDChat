@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from dtos.chats import ChatMappingDataDTO
 from exceptions.chats import ChatMappingDataAlreadyExistsException, ChatMappingDataNotFoundException
+
 from repositories.chats.base import BaseChatsRepository
 
 

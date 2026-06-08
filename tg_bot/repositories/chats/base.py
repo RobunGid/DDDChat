@@ -5,6 +5,7 @@ from typing import overload
 from aiosqlite import connect
 from dtos.chats import ChatMappingDataDTO
 from exceptions.chats import ChatMappingDataNotFoundException
+
 from repositories.queries import (
     ADD_NEW_CHAT_MAPPING_DATA_SQL_QUERY,
     DELETE_CHAT_MAPPING_DATA_BY_TELEGRAM_THREAD_ID_SQL_QUERY,

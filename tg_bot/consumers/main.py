@@ -1,7 +1,7 @@
-from consumers.handlers import router
 from faststream import FastStream
 from faststream.kafka.broker import KafkaBroker
 
+from consumers.handlers import router
 from settings.config import get_config
 
 

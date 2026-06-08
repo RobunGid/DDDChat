@@ -9,8 +9,8 @@ from aiogram_i18n import I18nMiddleware
 from aiogram_i18n.cores import FluentRuntimeCore
 from handlers.base import base_router
 from handlers.chats import chats_router
-from repositories.initialize import create_tables
 
+from repositories.initialize import create_tables
 from settings.config import get_config
 
 logging.basicConfig(level=logging.INFO)

@@ -3,9 +3,10 @@ from aiogram.enums import ContentType
 from aiogram.filters import Command, ExceptionTypeFilter
 from aiogram.types import ErrorEvent, Message
 from aiogram_i18n import I18nContext
-from containers.factories import get_container
 from exceptions.chats import ChatMessageCreateTimeoutWebException, ChatMessageCreateWebException
 from handlers.converters.chats import convert_chat_dtos_to_translated_message
+
+from containers.factories import get_container
 from services.chats import ChatsStorageService
 from services.web import BaseChatWebService
 

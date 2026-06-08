@@ -1,7 +1,6 @@
 import sqlite3
 
 from repositories.queries import CREATE_CHAT_MAPPING_DATA_TABLE_SQL_QUERY
-
 from settings.config import get_config
 
 

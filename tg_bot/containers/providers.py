@@ -1,10 +1,10 @@
 from aiogram import Bot
 from dishka import AnyOf, provide, Provider, Scope
 from httpx import AsyncClient
+
 from repositories.chats.base import BaseChatsRepository, SQLChatsRepository
 from services.chats import ChatsStorageService
 from services.web import BaseChatWebService, ChatWebService
-
 from settings.config import Config
 
 

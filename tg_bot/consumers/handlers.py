@@ -1,10 +1,9 @@
 from aiogram import Bot
+from faststream.kafka.broker import KafkaRouter
+
 from consumers.schemas import DeleteChatSchema, NewChatMessageSchema, NewChatSchema
 from containers.factories import get_container
-from faststream import Context
-from faststream.kafka.broker import KafkaRouter
 from services.chats import ChatsStorageService
-
 from settings.config import get_config
 
 config = get_config()
@@ -15,7 +14,6 @@ router = KafkaRouter()
 @router.subscriber(config.new_message_received_event_topic, group_id=config.kafka_group_id)
 async def new_message_subscription_handler(
     message: NewChatMessageSchema,
-    key: bytes = Context("message.raw_message.key"),
 ):
     container = get_container()
     async with container() as request_container:

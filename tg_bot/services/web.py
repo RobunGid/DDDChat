@@ -10,6 +10,7 @@ from exceptions.chats import (
     ChatWebException,
 )
 from httpx import AsyncClient, ConnectTimeout, HTTPStatusError
+
 from services.constants import (
     CHAT_LIST_URI,
     CHAT_MESSAGES_URI,
