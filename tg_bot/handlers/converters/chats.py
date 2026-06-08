@@ -1,5 +1,5 @@
 from aiogram_i18n import I18nContext
-from dtos.messages import ChatDTO
+from dtos.chats import ChatDTO
 
 
 def convert_chat_dtos_to_translated_message(

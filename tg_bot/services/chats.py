@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from dtos.messages import ChatDataDTO
+from dtos.chats import ChatDataDTO
 from exceptions.chats import ChatAlreadyExistsException
 from repositories.chats.base import BaseChatsRepository
 

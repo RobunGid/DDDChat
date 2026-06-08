@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
 from aiosqlite import connect
-from dtos.messages import ChatDataDTO
+from dtos.chats import ChatDataDTO
 from exceptions.chats import ChatDataNotFoundException
 from repositories.sql import (
     ADD_NEW_CHAT_DATA,

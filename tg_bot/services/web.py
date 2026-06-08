@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from urllib.parse import urljoin
 
-from dtos.messages import ChatDTO, ChatListenerDTO
+from dtos.chats import ChatDTO, ChatListenerDTO
 from exceptions.chats import (
     ChatDataRequestException,
     ChatListenerAddRequestException,
