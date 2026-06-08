@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 
-from logic.exceptions.base import LogicException
+from domain.exceptions.base import ApplicationConflictException, ApplicationNotFoundException
 
 
 @dataclass(eq=False)
-class ChatWithThatTitleAlreadyExistsException(LogicException):
+class ChatWithThatTitleAlreadyExistsException(ApplicationConflictException):
     title: str
 
     @property
@@ -13,7 +13,7 @@ class ChatWithThatTitleAlreadyExistsException(LogicException):
 
 
 @dataclass(eq=False)
-class ChatNotFoundException(LogicException):
+class ChatNotFoundException(ApplicationNotFoundException):
     chat_oid: str
 
     @property

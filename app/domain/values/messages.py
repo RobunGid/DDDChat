@@ -1,8 +1,9 @@
 from dataclasses import dataclass
 
+from domain.exceptions.chats import ChatTitleEmptyException, ChatTitleTooLongException
 from domain.exceptions.messages import (
-    EmptyTextException,
-    TitleTooLongException,
+    MessageTextEmptyException,
+    MessageTextTooLongException,
 )
 from domain.values.base import BaseValueObject
 
@@ -11,7 +12,9 @@ from domain.values.base import BaseValueObject
 class Text(BaseValueObject[str]):
     def validate(self):
         if not self.value:
-            raise EmptyTextException()
+            raise MessageTextEmptyException()
+        if len(self.value) > 255:
+            raise MessageTextTooLongException(self.value)
 
     def as_generic_type(self) -> str:
         return str(self.value)
@@ -21,9 +24,9 @@ class Text(BaseValueObject[str]):
 class Title(BaseValueObject[str]):
     def validate(self):
         if not self.value:
-            raise EmptyTextException()
+            raise ChatTitleEmptyException()
         if len(self.value) > 255:
-            raise TitleTooLongException(self.value)
+            raise ChatTitleTooLongException(self.value)
 
     def as_generic_type(self):
         return str(self.value)

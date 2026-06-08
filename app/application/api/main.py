@@ -5,21 +5,23 @@ from fastapi import FastAPI
 from aiojobs import Scheduler
 from punq import Container
 
+from application.api.exception_handlers import (
+    conflict_exception_handler,
+    not_found_exception_handler,
+    validation_exception_handler,
+)
 from application.api.lifespan import (
     close_message_broker,
     consumer_in_background,
     init_message_broker,
 )
-from application.api.messages.exception_handlers import (
-    chat_not_found_exception_handler,
-    chat_title_too_long_exception_handler,
-    chat_with_that_title_already_exists_exception_handler,
-    empty_text_exception_handler,
-)
 from application.api.messages.handlers import router as message_router
 from application.api.messages.websockets.messages import router as message_ws_router
-from domain.exceptions.messages import EmptyTextException, TitleTooLongException
-from logic.exceptions.messages import ChatNotFoundException, ChatWithThatTitleAlreadyExistsException
+from domain.exceptions.base import (
+    ApplicationConflictException,
+    ApplicationNotFoundException,
+    ApplicationValidationException,
+)
 from logic.init import init_container
 
 
@@ -47,15 +49,8 @@ def create_app() -> FastAPI:
     app.include_router(message_router, prefix="/chats")
     app.include_router(message_ws_router, prefix="/chats")
 
-    app.add_exception_handler(ChatNotFoundException, chat_not_found_exception_handler)
-    app.add_exception_handler(
-        ChatWithThatTitleAlreadyExistsException,
-        chat_with_that_title_already_exists_exception_handler,
-    )
-    app.add_exception_handler(TitleTooLongException, chat_title_too_long_exception_handler)
-    app.add_exception_handler(
-        EmptyTextException,
-        empty_text_exception_handler,
-    )
+    app.add_exception_handler(ApplicationValidationException, validation_exception_handler)
+    app.add_exception_handler(ApplicationConflictException, conflict_exception_handler)
+    app.add_exception_handler(ApplicationNotFoundException, not_found_exception_handler)
 
     return app

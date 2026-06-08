@@ -1,19 +1,19 @@
 from dataclasses import dataclass
 
-from domain.exceptions.base import ApplicationException
+from domain.exceptions.base import ApplicationValidationException
 
 
 @dataclass(eq=False)
-class TitleTooLongException(ApplicationException):
+class MessageTextEmptyException(ApplicationValidationException):
+    @property
+    def message(self):
+        return "Message text is required but was not provided or is empty"
+
+
+@dataclass(eq=False)
+class MessageTextTooLongException(ApplicationValidationException):
     text: str
 
     @property
     def message(self):
-        return f"Text too long: {self.text[:255]}..."
-
-
-@dataclass(eq=False)
-class EmptyTextException(ApplicationException):
-    @property
-    def message(self):
-        return "Text cannot be empty"
+        return f"Message text length exceeds allowed limit; received text starts with: {self.text[:255]}..."
