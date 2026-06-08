@@ -133,7 +133,7 @@ def _init_container() -> Container:
     )
 
     def init_mediator() -> Mediator:
-        mediator: Mediator = Mediator()
+        mediator = Mediator()
 
         # Message handlers
         create_chat_handler = CreateChatCommandHandler(

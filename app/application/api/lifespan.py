@@ -19,9 +19,9 @@ async def close_message_broker():
 
 async def consumer_in_background():
     container = init_container()
-    config: Config = container.resolve(Config)
+    config = container.resolve(Config)
     message_broker: BaseMessageBroker = container.resolve(BaseMessageBroker)
-    mediator: Mediator = container.resolve(Mediator)
+    mediator = container.resolve(Mediator)
 
     async for msg in message_broker.start_consuming(
         config.new_message_received_event_topic,

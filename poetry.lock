@@ -2249,6 +2249,18 @@ shellingham = ">=1.3.0"
 typing-extensions = ">=3.7.4.3"
 
 [[package]]
+name = "types-punq"
+version = "0.7.0.20260518"
+description = "Typing stubs for punq"
+optional = false
+python-versions = ">=3.10"
+groups = ["dev"]
+files = [
+    {file = "types_punq-0.7.0.20260518-py3-none-any.whl", hash = "sha256:c7551313ac972414f8c47cfc116f50d68429d6c01396bd7399c1ec8aaf7cecc6"},
+    {file = "types_punq-0.7.0.20260518.tar.gz", hash = "sha256:55d4ed8851302bf38a8ec4971a17d9d80f8b76a0c58b381e8feb535cded43fd8"},
+]
+
+[[package]]
 name = "typing-extensions"
 version = "4.15.0"
 description = "Backported and Experimental Type Hints for Python 3.9+"
@@ -2652,4 +2664,4 @@ propcache = ">=0.2.1"
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13,<3.15"
-content-hash = "258b4cba26b16a6b82a466f580b03c4c996d67b8927ae53a3692c3c3e3d48676"
+content-hash = "41005bbb7204fd6b34798125d9172c3bff505828a37e9445bfe6b354651bf75d"

@@ -58,7 +58,7 @@ async def create_chat_handler(
     schema: CreateChatRequestSchema,
     container: Container = Depends(init_container),
 ) -> CreateChatResponseSchema:
-    mediator: Mediator = container.resolve(Mediator)
+    mediator = container.resolve(Mediator)
     chat: Chat
     chat, *_ = await mediator.handle_command(CreateChatCommand(title=schema.title))
     return CreateChatResponseSchema.from_entity(chat)
@@ -80,7 +80,7 @@ async def create_message_handler(
     chat_oid: str,
     container: Container = Depends(init_container),
 ) -> CreateMessageResponseSchema:
-    mediator: Mediator = container.resolve(Mediator)
+    mediator = container.resolve(Mediator)
     message: Message
     message, *_ = await mediator.handle_command(
         CreateMessageCommand(text=schema.text, chat_oid=chat_oid),
@@ -102,7 +102,7 @@ async def get_chat_handler(
     chat_oid: str,
     container: Container = Depends(init_container),
 ) -> ResponseChatSchema:
-    mediator: Mediator = container.resolve(Mediator)
+    mediator = container.resolve(Mediator)
     chat: Chat = await mediator.handle_query(GetChatQuery(chat_oid=chat_oid))
     return ResponseChatSchema.from_entity(chat)
 
@@ -122,7 +122,7 @@ async def get_chat_messages_handler(
     filters: GetMessagesFiltersSchema = Depends(),
     container: Container = Depends(init_container),
 ) -> GetMessagesQueryResponseSchema:
-    mediator: Mediator = container.resolve(Mediator)
+    mediator = container.resolve(Mediator)
 
     messages, count = await mediator.handle_query(
         GetMessagesQuery(chat_oid=chat_oid, filters=filters.to_infrastructure()),
@@ -150,7 +150,7 @@ async def get_chats_handler(
     filters: GetChatsFiltersSchema = Depends(),
     container: Container = Depends(init_container),
 ) -> GetChatsQueryResponseSchema:
-    mediator: Mediator = container.resolve(Mediator)
+    mediator = container.resolve(Mediator)
 
     chats, count = await mediator.handle_query(
         GetChatsQuery(filters=filters.to_infrastructure()),
@@ -176,6 +176,6 @@ async def delete_chat_handler(
     chat_oid: str,
     container: Container = Depends(init_container),
 ) -> None:
-    mediator: Mediator = container.resolve(Mediator)
+    mediator = container.resolve(Mediator)
 
     await mediator.handle_command(DeleteChatCommand(chat_oid=chat_oid))

@@ -9,14 +9,12 @@ class Config(BaseSettings):
     web_api_base_url: str = Field(alias="WEB_API_BASE_URL")
 
     kafka_url: str = Field(alias="KAFKA_URL")
-    kafka_group_id: str = Field(alias="KAFKA_GROUP_ID", default="tg-bot")
+    kafka_group_id: str = Field(alias="KAFKA_GROUP_ID")
 
     new_message_received_event_topic: str = Field(
-        default="new-messages",
         alias="NEW_MESSAGE_RECEIVED_EVENT_TOPIC",
     )
     new_chats_event_topic: str = Field(
-        default="new-chats-topic",
         alias="NEW_CHATS_EVENT_TOPIC",
     )
     telegram_support_group_id: str = Field(

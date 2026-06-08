@@ -25,7 +25,7 @@ async def message_handlers(
     container: Container = Depends(init_container),
 ):
     connection_manager: BaseConnectionManager = container.resolve(BaseConnectionManager)
-    mediator: Mediator = container.resolve(Mediator)
+    mediator = container.resolve(Mediator)
 
     try:
         await mediator.handle_query(GetChatQuery(chat_oid=str(chat_oid)))
