@@ -2,7 +2,6 @@ from fastapi import (
     Depends,
     status,
 )
-from fastapi.exceptions import HTTPException
 from fastapi.routing import APIRouter
 
 from punq import Container
@@ -26,7 +25,6 @@ from domain.entities.messages import (
     Chat,
     Message,
 )
-from domain.exceptions.base import ApplicationException
 from logic.commands.messages import (
     CreateChatCommand,
     CreateMessageCommand,
@@ -61,15 +59,8 @@ async def create_chat_handler(
     container: Container = Depends(init_container),
 ) -> CreateChatResponseSchema:
     mediator: Mediator = container.resolve(Mediator)
-    try:
-        chat: Chat
-        chat, *_ = await mediator.handle_command(CreateChatCommand(title=schema.title))
-    except ApplicationException as exception:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail={"error": exception.message},
-        )
-
+    chat: Chat
+    chat, *_ = await mediator.handle_command(CreateChatCommand(title=schema.title))
     return CreateChatResponseSchema.from_entity(chat)
 
 
@@ -90,17 +81,10 @@ async def create_message_handler(
     container: Container = Depends(init_container),
 ) -> CreateMessageResponseSchema:
     mediator: Mediator = container.resolve(Mediator)
-    try:
-        message: Message
-        message, *_ = await mediator.handle_command(
-            CreateMessageCommand(text=schema.text, chat_oid=chat_oid),
-        )
-    except ApplicationException as exception:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail={"error": exception.message},
-        )
-
+    message: Message
+    message, *_ = await mediator.handle_command(
+        CreateMessageCommand(text=schema.text, chat_oid=chat_oid),
+    )
     return CreateMessageResponseSchema.from_entity(message)
 
 
@@ -119,14 +103,7 @@ async def get_chat_handler(
     container: Container = Depends(init_container),
 ) -> ResponseChatSchema:
     mediator: Mediator = container.resolve(Mediator)
-    try:
-        chat: Chat = await mediator.handle_query(GetChatQuery(chat_oid=chat_oid))
-    except ApplicationException as exception:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail={"error": exception.message},
-        )
-
+    chat: Chat = await mediator.handle_query(GetChatQuery(chat_oid=chat_oid))
     return ResponseChatSchema.from_entity(chat)
 
 
@@ -147,15 +124,9 @@ async def get_chat_messages_handler(
 ) -> GetMessagesQueryResponseSchema:
     mediator: Mediator = container.resolve(Mediator)
 
-    try:
-        messages, count = await mediator.handle_query(
-            GetMessagesQuery(chat_oid=chat_oid, filters=filters.to_infrastructure()),
-        )
-    except ApplicationException as exception:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail={"error": exception.message},
-        )
+    messages, count = await mediator.handle_query(
+        GetMessagesQuery(chat_oid=chat_oid, filters=filters.to_infrastructure()),
+    )
 
     return GetMessagesQueryResponseSchema(
         count=count,
@@ -181,16 +152,9 @@ async def get_chats_handler(
 ) -> GetChatsQueryResponseSchema:
     mediator: Mediator = container.resolve(Mediator)
 
-    try:
-        chats, count = await mediator.handle_query(
-            GetChatsQuery(filters=filters.to_infrastructure()),
-        )
-    except ApplicationException as exception:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail={"error": exception.message},
-        )
-
+    chats, count = await mediator.handle_query(
+        GetChatsQuery(filters=filters.to_infrastructure()),
+    )
     return GetChatsQueryResponseSchema(
         count=count,
         limit=filters.limit,
@@ -214,10 +178,4 @@ async def delete_chat_handler(
 ) -> None:
     mediator: Mediator = container.resolve(Mediator)
 
-    try:
-        await mediator.handle_command(DeleteChatCommand(chat_oid=chat_oid))
-    except ApplicationException as exception:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail={"error": exception.message},
-        )
+    await mediator.handle_command(DeleteChatCommand(chat_oid=chat_oid))

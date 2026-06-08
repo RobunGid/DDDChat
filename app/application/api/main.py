@@ -10,8 +10,13 @@ from application.api.lifespan import (
     consumer_in_background,
     init_message_broker,
 )
+from application.api.messages.exception_handlers import (
+    chat_not_found_exception_handler,
+    chat_with_that_title_already_exists_exception_handler,
+)
 from application.api.messages.handlers import router as message_router
 from application.api.messages.websockets.messages import router as message_ws_router
+from logic.exceptions.messages import ChatNotFoundException, ChatWithThatTitleAlreadyExistsException
 from logic.init import init_container
 
 
@@ -38,5 +43,11 @@ def create_app() -> FastAPI:
     )
     app.include_router(message_router, prefix="/chats")
     app.include_router(message_ws_router, prefix="/chats")
+
+    app.add_exception_handler(ChatNotFoundException, chat_not_found_exception_handler)
+    app.add_exception_handler(
+        ChatWithThatTitleAlreadyExistsException,
+        chat_with_that_title_already_exists_exception_handler,
+    )
 
     return app
