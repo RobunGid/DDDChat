@@ -78,7 +78,12 @@ class MongoDBMessagesRepository(BaseMessagesRepository, BaseMongoDBRepository):
         chat_oid: str,
         filters: GetMessagesFilters,
     ) -> tuple[Iterable[Message], int]:
-        cursor = self._collection.find({"chat_oid": chat_oid}).skip(filters.offset).limit(filters.limit)
+        cursor = (
+            self._collection.find({"chat_oid": chat_oid})
+            .sort([("created_at", -1)])
+            .skip(filters.offset)
+            .limit(filters.limit)
+        )
 
         messages = [convert_message_document_to_entity(message_document) async for message_document in cursor]
         count = await self._collection.count_documents(filter={"chat_oid": chat_oid})
