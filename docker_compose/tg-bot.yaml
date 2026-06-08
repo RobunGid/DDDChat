@@ -1,3 +1,7 @@
+include:
+  - path: ./messaging.yaml
+  - path: ./storages.yaml
+
 services:
   telegram-bot:
     build:

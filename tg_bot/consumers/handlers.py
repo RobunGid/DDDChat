@@ -39,6 +39,6 @@ async def new_chat_subscription_handler(data: ChatSchema):
     async with container() as request_container:
         bot = await request_container.get(Bot)
         chats_service = await request_container.get(ChatsService)
-        topic_name = f"{data.chat_title} | {data.chat_oid}"
+        topic_name = data.chat_title
         forum_topic = await bot.create_forum_topic(chat_id=config.telegram_support_group_id, name=topic_name)
         await chats_service.add_chat(telegram_chat_id=str(forum_topic.message_thread_id), web_chat_id=data.chat_oid)

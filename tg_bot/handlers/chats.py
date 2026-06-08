@@ -1,13 +1,9 @@
-from typing import cast
-
 from aiogram import F, Router
 from aiogram.enums import ContentType
-from aiogram.filters import Command, CommandObject, ExceptionTypeFilter
-from aiogram.fsm.context import FSMContext
-from aiogram.types import ErrorEvent, Message
+from aiogram.filters import Command
+from aiogram.types import Message
 from aiogram_i18n import I18nContext
 from containers.factories import get_container
-from exceptions.chats import ChatListenerAddRequestException
 from handlers.converters.chats import convert_chat_dtos_to_translated_message
 from services.web import BaseChatWebService
 
@@ -32,54 +28,9 @@ async def get_chats_handler(message: Message, i18n: I18nContext):
             )
 
 
-@chats_router.message(Command("add_chat"))
-async def add_chat_handler(message: Message, i18n: I18nContext, command: CommandObject, state: FSMContext):
-    container = get_container()
-
-    async with container() as request_container:
-        service = await request_container.get(BaseChatWebService)
-        if not command.args:
-            await message.answer(
-                i18n.get(
-                    "add_chat_need_argument",
-                ),
-            )
-            return
-
-        await service.add_listener(telegram_chat_id=str(message.chat.id), chat_oid=command.args)
-
-        await message.answer(
-            i18n.get(
-                "add_chat_success",
-            ),
-        )
-
-
 @chats_router.message(F.chat.is_forum, F.message_thread_id.is_not(None), F.content_type == ContentType.TEXT)
 async def send_message_to_chat_handler(
     message: Message,
-    # state: FSMContext,
-    # i18n: I18nContext,
+    i18n: I18nContext,
 ):
     await message.answer(text=f"{message.message_thread_id}")
-
-
-@chats_router.error(ExceptionTypeFilter(ChatListenerAddRequestException), F.update.message.as_("message"))
-async def add_chat_exception_handler(
-    event: ErrorEvent,
-    i18n: I18nContext,
-    message: Message,
-):
-    exc = cast(ChatListenerAddRequestException, event.exception)
-    if exc.status_code == 409:
-        await message.answer(
-            i18n.get(
-                "add_chat_already_connected_fail",
-            ),
-        )
-    elif exc.status_code == 404:
-        await message.answer(
-            i18n.get(
-                "add_chat_not_found_fail",
-            ),
-        )
