@@ -39,7 +39,7 @@ class GetChatsQuery(BaseQuery):
 @dataclass(frozen=True)
 class GetChatQueryHandler(BaseQueryHandler[GetChatQuery, Chat]):
     chats_repository: BaseChatsRepository
-    messages_repository: BaseMessagesRepository  # TODO: Get messages independtly
+    messages_repository: BaseMessagesRepository
 
     async def handle(self, query: GetChatQuery) -> Chat:
         chat = await self.chats_repository.get_chat_by_oid(oid=query.chat_oid)
