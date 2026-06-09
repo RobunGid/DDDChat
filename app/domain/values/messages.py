@@ -13,7 +13,7 @@ class Text(BaseValueObject[str]):
     def validate(self):
         if not self.value:
             raise MessageTextEmptyException()
-        if len(self.value) > 255:
+        if len(self.value) > 1024:
             raise MessageTextTooLongException(self.value)
 
     def as_generic_type(self) -> str:

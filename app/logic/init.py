@@ -135,70 +135,74 @@ def _init_container() -> Container:
     def init_application_bus() -> ApplicationBus:
         application_bus = ApplicationBus()
 
-        # Message handlers
-        create_chat_handler = CreateChatCommandHandler(
-            _command_bus=application_bus,
-            chats_repository=container.resolve(BaseChatsRepository),
-        )
-        delete_chat_handler = DeleteChatCommandHandler(
-            _command_bus=application_bus,
-            chats_repository=container.resolve(BaseChatsRepository),
-        )
-        create_message_handler = CreateMessageCommandHandler(
-            _command_bus=application_bus,
-            messages_repository=container.resolve(BaseMessagesRepository),
-            chats_repository=container.resolve(BaseChatsRepository),
-        )
-        # Event handlers
-        chat_create_event_handler = NewChatCreatedEventHandler(
-            broker_topic=config.chat_create_event_topic,
-            message_broker=container.resolve(BaseMessageBroker),
-            connection_manager=container.resolve(BaseConnectionManager),
-        )
-        message_create_event_handler = NewMessageReceivedEventHandler(
-            broker_topic=config.message_create_event_topic,
-            message_broker=container.resolve(BaseMessageBroker),
-            connection_manager=container.resolve(BaseConnectionManager),
-        )
-        new_message_received_from_broker_event_handler = NewMessageReceivedFromBrokerEventHandler(
-            message_broker=container.resolve(BaseMessageBroker),
-            broker_topic=config.message_create_event_topic,
-            connection_manager=container.resolve(BaseConnectionManager),
-        )
-        chat_delete_event_handler = ChatDeletedEventHandler(
-            broker_topic=config.chat_delete_event_topic,
-            message_broker=container.resolve(BaseMessageBroker),
-            connection_manager=container.resolve(BaseConnectionManager),
-        )
-        # Events
         application_bus.register_event(
             NewChatCreatedEvent,
-            [chat_create_event_handler],
+            [
+                NewChatCreatedEventHandler(
+                    broker_topic=config.chat_create_event_topic,
+                    message_broker=container.resolve(BaseMessageBroker),
+                    connection_manager=container.resolve(BaseConnectionManager),
+                ),
+            ],
         )
         application_bus.register_event(
             NewMessageReceivedEvent,
-            [message_create_event_handler],
+            [
+                NewMessageReceivedEventHandler(
+                    broker_topic=config.message_create_event_topic,
+                    message_broker=container.resolve(BaseMessageBroker),
+                    connection_manager=container.resolve(BaseConnectionManager),
+                ),
+            ],
         )
         application_bus.register_event(
             NewMessageReceivedFromBrokerEvent,
-            [new_message_received_from_broker_event_handler],
+            [
+                NewMessageReceivedFromBrokerEventHandler(
+                    message_broker=container.resolve(BaseMessageBroker),
+                    broker_topic=config.message_create_event_topic,
+                    connection_manager=container.resolve(BaseConnectionManager),
+                ),
+            ],
         )
         application_bus.register_event(
             ChatDeletedEvent,
-            [chat_delete_event_handler],
+            [
+                ChatDeletedEventHandler(
+                    broker_topic=config.chat_delete_event_topic,
+                    message_broker=container.resolve(BaseMessageBroker),
+                    connection_manager=container.resolve(BaseConnectionManager),
+                ),
+            ],
         )
         # Commands
         application_bus.register_command(
             CreateChatCommand,
-            [create_chat_handler],
+            [
+                CreateChatCommandHandler(
+                    _command_bus=application_bus,
+                    chats_repository=container.resolve(BaseChatsRepository),
+                ),
+            ],
         )
         application_bus.register_command(
             DeleteChatCommand,
-            [delete_chat_handler],
+            [
+                DeleteChatCommandHandler(
+                    _command_bus=application_bus,
+                    chats_repository=container.resolve(BaseChatsRepository),
+                ),
+            ],
         )
         application_bus.register_command(
             CreateMessageCommand,
-            [create_message_handler],
+            [
+                CreateMessageCommandHandler(
+                    _command_bus=application_bus,
+                    messages_repository=container.resolve(BaseMessagesRepository),
+                    chats_repository=container.resolve(BaseChatsRepository),
+                ),
+            ],
         )
         # Queries
         application_bus.register_query(

@@ -27,7 +27,7 @@ def test_create_message_success(faker: Faker):
 
 def test_create_message_fail_text_long_text(faker: Faker):
     with pytest.raises(MessageTextTooLongException):
-        Text(faker.text(255) + faker.text(255))
+        Text(faker.text(1024) + faker.text(1024))
 
 
 def test_create_chat_success(faker: Faker):
