@@ -9,8 +9,8 @@ from domain.entities.messages import (
     Message,
 )
 from domain.events.messages import NewMessageReceivedEvent
-from domain.exceptions.chats import ChatTitleTooLongException
-from domain.exceptions.messages import MessageTextTooLongException
+from domain.exceptions.chats import ChatTitleEmptyException, ChatTitleTooLongException
+from domain.exceptions.messages import MessageTextEmptyException, MessageTextTooLongException
 from domain.values.messages import (
     Text,
     Title,
@@ -25,9 +25,14 @@ def test_create_message_success(faker: Faker):
     assert message.created_at.date() == datetime.today().date()
 
 
-def test_create_message_fail_text_long_text(faker: Faker):
+def test_create_message_fail_long_text(faker: Faker):
     with pytest.raises(MessageTextTooLongException):
         Text(faker.text(1024) + faker.text(1024))
+
+
+def test_create_message_fail_empty_text(faker: Faker):
+    with pytest.raises(MessageTextEmptyException):
+        Text("")
 
 
 def test_create_chat_success(faker: Faker):
@@ -42,6 +47,11 @@ def test_create_chat_success(faker: Faker):
 def test_create_title_too_long(faker: Faker):
     with pytest.raises(ChatTitleTooLongException):
         Title(faker.text(255) + faker.text(255))
+
+
+def test_create_title_empty(faker: Faker):
+    with pytest.raises(ChatTitleEmptyException):
+        Title("")
 
 
 def test_add_chat_to_message(faker: Faker):
