@@ -15,7 +15,8 @@
 ### Tech Stack
 
 - **FastAPI** — high-performance async python framework  
-- **Aiogram** — Telegram bot integration  
+- **Aiogram** — Telegram bot integration
+- **Aiogram-i18n + Fluent** — internationalization runtime
 - **WebSockets** — real-time communication  
 - **Kafka (aiokafka)** — event streaming and messaging  
 - **MongoDB (Motor)** — asynchronous non-sql database layer  
